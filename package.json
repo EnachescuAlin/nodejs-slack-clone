@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/EnachescuAlin/nodejs-slack-clone/issues"
   },
-  "homepage": "https://github.com/EnachescuAlin/nodejs-slack-clone#readme"
+  "homepage": "https://github.com/EnachescuAlin/nodejs-slack-clone#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongo": "^0.1.0"
+  }
 }
