@@ -1,14 +1,17 @@
+const http = require('http');
 const express = require('express');
-
-let nr = 0;
+const bodyParser = require('body-parser');
 
 class Server
 {
     constructor()
     {
-        this.server = express();
+        this.server = express(http);
+        this.server.use(express.json());
 
         this.server.get('/', this.processingGet);
+
+        this.server.post('/signUp', this.handleSignUp);
     }
 
     start(port)
@@ -18,8 +21,13 @@ class Server
 
     processingGet(req, res)
     {
-        res.send('Hello world ' + nr);
-        nr++;
+        res.send('Hello world');
+    }
+
+    handleSignUp(req, res)
+    {
+        console.log('handle sign up, body =', req.body);
+        res.send(req.body);
     }
 }
 
