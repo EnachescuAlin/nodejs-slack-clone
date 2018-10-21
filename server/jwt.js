@@ -1,5 +1,4 @@
 const expressJwt = require('express-jwt');
-const pathToRegexp = require('path-to-regexp');
 
 const config = require('./config.json');
 const usersService = require('./users.service');
