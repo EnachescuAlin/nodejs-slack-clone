@@ -18,6 +18,15 @@ async function createUser(username, password, email)
     await newUser.save();
 }
 
+async function getAll()
+{
+    await console.log('called get all users');
+
+    const users = await userModel.find().select('username -_id');
+    return users;
+}
+
 module.exports = {
     createUser,
+    getAll
 };
