@@ -3,9 +3,10 @@ const jwt = require('jsonwebtoken');
 
 const config = require('./config.json');
 
-async function createUser(username, password, email)
+async function createUser(username, password, email, firstname, lastname)
 {
-    await console.log('called createUser, username =', username, ', password =', password, ', email =', email);
+    await console.log('called createUser, username =', username, ', password =', password,
+        ', email =', email, ', firstname =', firstname, ', lastname =', lastname);
 
     const user = await userModel.findOne({ 'username': username });
     if (user) {
@@ -17,6 +18,8 @@ async function createUser(username, password, email)
     newUser.username = username;
     newUser.password = password;
     newUser.email = email;
+    newUser.firstname = firstname;
+    newUser.lastname = lastname;
 
     await newUser.save();
 }
@@ -70,10 +73,10 @@ async function getById(id)
     }
 
     const {
-        userId, username, email, registerDate, status, online,
+        userId, username, email, registerDate, status, online, firstname, lastname,
         ...dropField
     } = user;
-    return { 'user': { userId, username, email, registerDate, status, online }};
+    return { 'user': { userId, username, email, registerDate, status, online, firstname, lastname }};
 }
 
 async function getByUsername(username)
@@ -87,10 +90,10 @@ async function getByUsername(username)
     }
 
     const {
-        userId, name, email, registerDate, status, online,
+        userId, name, email, registerDate, status, online, firstname, lastname,
         ...dropField
     } = user;
-    return { 'user': { userId, username, email, registerDate, status, online }};
+    return { 'user': { userId, username, email, registerDate, status, online, firstname, lastname }};
 }
 
 module.exports = {

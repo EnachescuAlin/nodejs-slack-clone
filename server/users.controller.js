@@ -15,7 +15,9 @@ function register(req, res, next)
     const username = req.body.username;
     const password = req.body.password;
     const email = req.body.email;
-    userService.createUser(username, password, email)
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
+    userService.createUser(username, password, email, firstname, lastname)
         .then(() => res.json({}))
         .catch(err => next(err));
 }

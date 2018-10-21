@@ -19,6 +19,14 @@ const UserSchema = mongoose.Schema({
         type: mongoose.Schema.Types.String,
         required: true
     },
+    firstname: {
+        type: mongoose.Schema.Types.String,
+        required: true
+    },
+    lastname: {
+        type: mongoose.Schema.Types.String,
+        required: true
+    },
     registerDate: {
         type: mongoose.Schema.Types.Date,
         default: Date.now
@@ -29,12 +37,14 @@ const UserSchema = mongoose.Schema({
     },
     openPrivateMessages: [
         {
-            type: mongoose.Schema.Types.String
+            // user id
+            type: mongoose.Schema.Types.Number
         }
     ],
     channels: [
         {
-            type: mongoose.Schema.Types.String,
+            // channel id
+            type: mongoose.Schema.Types.Number,
         }
     ],
     online: {
