@@ -9,6 +9,11 @@ router.get('/getAll', getAll);
 router.get('/getById/:userId', getById);
 router.get('/getByUsername/:username', getByUsername);
 router.get('/logout', logout);
+router.get('/getCurrent', getCurrent);
+
+router.put('/changeFirstName', changeFirstName);
+router.put('/changeLastName', changeLastName);
+router.put('/changePassword', changePassword);
 
 function register(req, res, next)
 {
@@ -59,6 +64,41 @@ function getByUsername(req, res, next)
     userService.getByUsername(username)
         .then(user => res.json(user))
         .catch(err => next(err));
+}
+
+function getCurrent(req, res, next)
+{
+    const userId = req.user.sub;
+    userService.getById(userId)
+        .then(user => res.json(user))
+        .catch(err => next(err));
+}
+
+function changeFirstName(req, res, next)
+{
+    const userId = req.user.sub;
+    const newFirstName = req.body.newFirstName;
+    userService.changeFirstName(userId, newFirstName)
+        .then(() => res.json({}))
+        .catch(err => ext(err));
+}
+
+function changeLastName(req, res, next)
+{
+    const userId = req.user.sub;
+    const newLastName = req.body.newLastName;
+    userService.changeLastName(userId, newLastName)
+        .then(() => res.json({}))
+        .catch(err => ext(err));
+}
+
+function changePassword(req, res, next)
+{
+    const userId = req.user.sub;
+    const newPassword = req.body.newPassword;
+    userService.changePassword(userId, newPassword)
+        .then(() => res.json({}))
+        .catch(err => ext(err));
 }
 
 module.exports = router;

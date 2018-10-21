@@ -96,6 +96,24 @@ async function getByUsername(username)
     return { 'user': { userId, username, email, registerDate, status, online, firstname, lastname }};
 }
 
+async function changeFirstName(userId, newFirstName)
+{
+    await console.log('called changeFirstName, id =', userId, ', new first name =', newFirstName);
+    await userModel.findOneAndUpdate({ 'userId': userId }, { $set: { 'firstname': newFirstName }});
+}
+
+async function changeLastName(userId, newLastName)
+{
+    await console.log('called changeLastName, id =', userId, ', new last name =', newLastName);
+    await userModel.findOneAndUpdate({ 'userId': userId }, { $set: { 'lastname': newLastName }});
+}
+
+async function changePassword(userId, newPassword)
+{
+    await console.log('called changePassword, id =', userId, ', new passowrd =', newPassword);
+    await userModel.findOneAndUpdate({ 'userId': userId }, { $set: { 'password': newPassword }});
+}
+
 module.exports = {
     createUser,
     login,
@@ -103,5 +121,8 @@ module.exports = {
     findById,
     getAll,
     getById,
-    getByUsername
+    getByUsername,
+    changeFirstName,
+    changeLastName,
+    changePassword
 };
