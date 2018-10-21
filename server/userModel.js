@@ -24,7 +24,8 @@ const UserSchema = mongoose.Schema({
         default: Date.now
     },
     status: {
-        type: mongoose.Schema.Types.String
+        type: mongoose.Schema.Types.String,
+        default: ""
     },
     openPrivateMessages: [
         {
