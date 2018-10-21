@@ -31,8 +31,16 @@ async function login(username, password)
         throw 'username or password is incorrect';
     }
 
+    await userModel.findOneAndUpdate({ 'username': username }, { $set: { 'online': true }});
+
     const token = jwt.sign({ sub: user.userId }, config.secret);
     return { 'token': token };
+}
+
+async function logout(userId)
+{
+    await console.log('called logout, id =', userId);
+    await userModel.findOneAndUpdate({ 'userId': userId }, { $set: { 'online': false }});
 }
 
 async function findById(id)
@@ -88,6 +96,7 @@ async function getByUsername(username)
 module.exports = {
     createUser,
     login,
+    logout,
     findById,
     getAll,
     getById,
