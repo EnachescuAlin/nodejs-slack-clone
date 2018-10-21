@@ -39,7 +39,7 @@ async function findById(id)
 {
     await console.log('called findById, id =', id);
 
-    if (await userModel.find({ 'userId': id})) {
+    if (await userModel.findOne({ 'userId': id})) {
         return true;
     }
     return false;
