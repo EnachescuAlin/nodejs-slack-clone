@@ -8,7 +8,7 @@ router.post('/login', login);
 router.get('/getAll', getAll);
 router.get('/getById/:userId', getById);
 router.get('/getByUsername/:username', getByUsername);
-router.get('/logout/:userId', logout);
+router.get('/logout', logout);
 
 function register(req, res, next)
 {
@@ -33,8 +33,7 @@ function login(req, res, next)
 
 function logout(req, res, next)
 {
-    const userId = req.params.userId;
-    userService.logout(userId)
+    userService.logout(req.user.sub)
         .then(() => res.json({}))
         .catch(err => next(err));
 }
