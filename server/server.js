@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const counterModel = require('./countersModel');
 const errorHandler = require('./errorHandler');
+const jwt = require('./jwt');
 
 async function init()
 {
@@ -46,6 +47,8 @@ init();
 const app = express(http);
 
 app.use(express.json());
+
+app.use(jwt());
 
 // api routes
 app.use('/users', require('./users.controller'));

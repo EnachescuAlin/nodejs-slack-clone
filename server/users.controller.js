@@ -3,6 +3,7 @@ const router = express.Router();
 const userService = require('./users.service');
 
 router.post('/register', register);
+router.post('/login', login);
 
 router.get('/getAll', getAll);
 router.get('/getById/:userId', getById);
@@ -15,6 +16,15 @@ function register(req, res, next)
     const email = req.body.email;
     userService.createUser(username, password, email)
         .then(() => res.json({}))
+        .catch(err => next(err));
+}
+
+function login(req, res, next)
+{
+    const username = req.body.username;
+    const password = req.body.password;
+    userService.login(username, password)
+        .then(user => res.json(user))
         .catch(err => next(err));
 }
 
