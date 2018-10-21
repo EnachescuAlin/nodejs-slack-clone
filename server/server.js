@@ -40,6 +40,30 @@ async function init()
             console.log('created counter userId successfully');
         });
     });
+
+    await counterModel.findOne({ 'name': 'channelId'}, (err, counter) => {
+        if (err) {
+            console.log('could not execute findOne, counter = channelId');
+            return;
+        }
+        if (counter) {
+            console.log('counter channelId already created, value =', counter.value);
+            return;
+        }
+
+        const newCounter = new counterModel();
+        newCounter.name = 'channelId';
+        newCounter.value = 1;
+
+        newCounter.save((err, counter) => {
+            if (err) {
+                console.log('save counter channelId failed =', err);
+                return;
+            }
+
+            console.log('created counter channelId successfully');
+        });
+    });
 }
 
 init();
