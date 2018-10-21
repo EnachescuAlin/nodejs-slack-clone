@@ -1,4 +1,5 @@
 const expressJwt = require('express-jwt');
+const pathToRegexp = require('path-to-regexp');
 
 const config = require('./config.json');
 const usersService = require('./users.service');
@@ -16,7 +17,9 @@ function jwt()
             '/debug/getAllUsers',
             '/debug/getAllCounters',
             '/debug/deleteAllUsers',
-            '/debug/deleteAllCounters'
+            '/debug/deleteAllCounters',
+            /\/debug\/deleteUser\/*/,
+            /\/debug\/deleteCounter\/*/
         ]
     });
 }

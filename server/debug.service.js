@@ -13,6 +13,18 @@ async function deleteAllCounters()
     await countersModel.deleteMany({});
 }
 
+async function deleteUser(username)
+{
+    await console.log('called debug delete user');
+    await userModel.deleteOne({ 'username': username });
+}
+
+async function deleteCounter(counter)
+{
+    await console.log('called debug delete counter')
+    await countersModel.deleteOne({ 'name': counter });
+}
+
 async function getAllUsers()
 {
     await console.log('called debug get all users');
@@ -29,5 +41,7 @@ module.exports = {
     deleteAllUsers,
     deleteAllCounters,
     getAllUsers,
-    getAllCounters
+    getAllCounters,
+    deleteUser,
+    deleteCounter
 };
