@@ -5,6 +5,8 @@ const userService = require('./users.service');
 router.post('/register', register);
 
 router.get('/getAll', getAll);
+router.get('/getById/:userId', getById);
+router.get('/getByUsername/:username', getByUsername);
 
 function register(req, res, next)
 {
@@ -20,6 +22,22 @@ function getAll(req, res, next)
 {
     userService.getAll()
         .then(users => res.json(users))
+        .catch(err => next(err));
+}
+
+function getById(req, res, next)
+{
+    const userId = req.params.userId;
+    userService.getById(userId)
+        .then(user => res.json(user))
+        .catch(err => next(err));
+}
+
+function getByUsername(req, res, next)
+{
+    const username = req.params.username;
+    userService.getByUsername(username)
+        .then(user => res.json(user))
         .catch(err => next(err));
 }
 
