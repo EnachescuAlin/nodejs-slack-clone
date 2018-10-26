@@ -1,19 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const userService = require('./users.service');
+import { Router } from 'express';
+const router = Router();
+import userService from './userService';
 
 router.post('/register', register);
 router.post('/login', login);
 
-router.get('/getAll', getAll);
-router.get('/getById/:userId', getById);
+router.get('/', getAll);
+router.get('/:userId', getById);
 router.get('/getByUsername/:username', getByUsername);
 router.get('/logout', logout);
-router.get('/getCurrent', getCurrent);
-
-router.put('/changeFirstName', changeFirstName);
-router.put('/changeLastName', changeLastName);
-router.put('/changePassword', changePassword);
+router.get('/current', getCurrent);
 
 function register(req, res, next)
 {
@@ -22,8 +18,8 @@ function register(req, res, next)
     const email = req.body.email;
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
-    userService.createUser(username, password, email, firstname, lastname)
-        .then(() => res.json({}))
+    userService.createUser({username, password, email, firstname, lastname})
+        .then((newUser) => res.json(newUser))
         .catch(err => next(err));
 }
 
@@ -74,31 +70,4 @@ function getCurrent(req, res, next)
         .catch(err => next(err));
 }
 
-function changeFirstName(req, res, next)
-{
-    const userId = req.user.sub;
-    const newFirstName = req.body.newFirstName;
-    userService.changeFirstName(userId, newFirstName)
-        .then(() => res.json({}))
-        .catch(err => ext(err));
-}
-
-function changeLastName(req, res, next)
-{
-    const userId = req.user.sub;
-    const newLastName = req.body.newLastName;
-    userService.changeLastName(userId, newLastName)
-        .then(() => res.json({}))
-        .catch(err => ext(err));
-}
-
-function changePassword(req, res, next)
-{
-    const userId = req.user.sub;
-    const newPassword = req.body.newPassword;
-    userService.changePassword(userId, newPassword)
-        .then(() => res.json({}))
-        .catch(err => ext(err));
-}
-
-module.exports = router;
+export default router;
