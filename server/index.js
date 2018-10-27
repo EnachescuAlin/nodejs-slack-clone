@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 async function init()
 {
     await mongoose.set('useCreateIndex', true)
+    await mongoose.set('useFindAndModify', false);
     await mongoose.connect('mongodb://localhost/slack_clone_db', { useNewUrlParser: true }, (err) => {
         if (err) {
             console.log('connect to database failed =', err);
@@ -26,7 +27,7 @@ app.use(json());
 app.use(jwt());
 
 // api routes
-app.use('/users', userController);
+app.use('/api/users', userController);
 
 // global error handler
 app.use(errorHandler);

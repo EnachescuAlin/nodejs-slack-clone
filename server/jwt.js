@@ -4,7 +4,7 @@ import { secret } from './constants';
 
 function jwt()
 {
-    return expressJwt({ secret }).unless({
+    return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes that don't require authentication
             '/users/login',
@@ -12,5 +12,15 @@ function jwt()
         ]
     });
 }
+
+async function isRevoked(req, payload, done) {
+    const user = await userService.getById(payload.sub);
+
+    if (!user) {
+        return done(null, true);
+    }
+
+    done();
+};
 
 export default jwt;
