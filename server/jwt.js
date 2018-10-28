@@ -1,35 +1,26 @@
-const expressJwt = require('express-jwt');
-
-const config = require('./config.json');
-const usersService = require('./users.service');
+import expressJwt from 'express-jwt';
+import userService from './user/userService';
+import { secret } from './constants';
 
 function jwt()
 {
-    const secret = config.secret;
     return expressJwt({ secret, isRevoked }).unless({
         path: [
             // public routes that don't require authentication
             '/users/login',
-            '/users/register',
-
-            // debug routes
-            '/debug/getAllUsers',
-            '/debug/getAllCounters',
-            '/debug/deleteAllUsers',
-            '/debug/deleteAllCounters',
-            /\/debug\/deleteUser\/*/,
-            /\/debug\/deleteCounter\/*/
+            '/users/register'
         ]
     });
 }
 
-async function isRevoked(req, payload, done)
-{
-    if (!await usersService.findById(payload.sub)) {
+async function isRevoked(req, payload, done) {
+    const user = await userService.getById(payload.sub);
+
+    if (!user) {
         return done(null, true);
     }
-    
+
     done();
 };
 
-module.exports = jwt;
+export default jwt;
