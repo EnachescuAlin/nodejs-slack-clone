@@ -3,6 +3,7 @@ import express, { json } from 'express';
 import errorHandler from './errorHandler';
 import jwt from './jwt';
 import userController from './user/usersController';
+import channelController from './channel/channelsController';
 import mongoose from 'mongoose';
 
 async function init()
@@ -28,6 +29,7 @@ app.use(jwt());
 
 // api routes
 app.use('/api/users', userController);
+app.use('/api/channels', channelController);
 
 // global error handler
 app.use(errorHandler);
