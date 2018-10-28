@@ -97,6 +97,12 @@ async function update(id, user) {
     await existingUser.save();
 }
 
+async function remove(id) {
+    const existingUser = await User.findById(id);
+    if (!existingUser) throw 'User not found';
+    await existingUser.remove();
+}
+
 export default {
     createUser,
     login,
@@ -104,5 +110,6 @@ export default {
     getAll,
     getById,
     getByUsername,
-    update
+    update,
+    remove
 };
