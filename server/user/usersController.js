@@ -7,7 +7,7 @@ router.post('/login', login);
 router.post('/logout', logout);
 
 router.get('/', get);
-router.get('/:id', getById);
+router.get('/getById/:id', getById);
 router.get('/current', getCurrent);
 
 router.put('/:id', update);
