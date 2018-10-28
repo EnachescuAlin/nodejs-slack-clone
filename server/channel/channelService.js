@@ -1,4 +1,5 @@
 import Channel from './channel';
+import User from '../user/user';
 
 async function createChannel(name, description, isPublic, createdBy)
 {
@@ -15,6 +16,9 @@ async function createChannel(name, description, isPublic, createdBy)
     newChannel.members = [ createdBy ];
 
     await newChannel.save();
+
+    await User.findByIdAndUpdate(createdBy, { $push: { channels: newChannel.id }});
+
     return newChannel.toDto();
 }
 
