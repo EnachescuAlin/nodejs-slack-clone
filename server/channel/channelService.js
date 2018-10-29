@@ -35,7 +35,7 @@ async function getChannelById(channelId, userId)
     if (!channel) {
         throw 'not found channel with id = ' + channelId;
     }
-    if (channel.isPublic === false && !channel.members.find(obj => obj === userId)) {
+    if (channel.isPublic === false && ! await channel.members.find(obj => obj.equals(userId))) {
         throw 'not allowed';
     }
     return channel.toDto();
