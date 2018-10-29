@@ -4,6 +4,7 @@ const router = Router();
 import channelService from './channelService';
 
 router.post('/create', createChannel);
+router.post('/join/:id', join);
 
 router.get('/', getChannels);
 router.get('/byId/:id', getChannelById);
@@ -32,6 +33,15 @@ function getChannelById(req, res, next)
     const userId = req.user.sub;
     channelService.getChannelById(channelId, userId)
         .then(channel => res.json(channel))
+        .catch(err => next(err));
+}
+
+function join(req, res, next)
+{
+    const channelId = req.params.id;
+    const userId = req.user.sub;
+    channelService.join(channelId, userId)
+        .then(() => res.json({}))
         .catch(err => next(err));
 }
 

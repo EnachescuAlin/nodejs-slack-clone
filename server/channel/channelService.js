@@ -41,8 +41,35 @@ async function getChannelById(channelId, userId)
     return channel.toDto();
 }
 
+async function join(channelId, userId)
+{
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+        throw 'not found channel with id = ' + channelId;
+    }
+    if (channel.isPublic === false) {
+        throw 'not allowed';
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        throw 'not found user with id = ' + userId;
+    }
+
+    if (await channel.members.find(obj => obj.equals(userId))) {
+        throw 'user is already joined';
+    }
+
+    await user.channels.push(channelId);
+    await channel.members.push(userId);
+
+    await user.save();
+    await channel.save();
+}
+
 export default {
     createChannel,
     getPublicChannels,
-    getChannelById
+    getChannelById,
+    join
 };
