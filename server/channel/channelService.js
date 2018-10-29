@@ -67,9 +67,38 @@ async function join(channelId, userId)
     await channel.save();
 }
 
+async function leave(channelId, userId)
+{
+    const user = await User.findById(userId);
+    if (!user) {
+        throw 'not found user with id = ' + userId;
+    }
+
+    if (! await user.channels.find(obj => obj.equals(channelId))) {
+        throw 'user is not joined in this channel';
+    }
+
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+        throw 'not found channel with id = ' + channelId;
+    }
+
+    user.channels = await user.channels.filter(obj => !obj.equals(channelId));
+    channel.members = await channel.members.filter(obj => !obj.equals(userId));
+
+    await user.save();
+
+    if (await channel.members.length === 0) {
+        await Channel.findByIdAndDelete(channelId);
+    } else {
+        await channel.save();
+    }
+}
+
 export default {
     createChannel,
     getPublicChannels,
     getChannelById,
-    join
+    join,
+    leave
 };
