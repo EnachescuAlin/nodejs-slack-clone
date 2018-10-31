@@ -1,6 +1,8 @@
 import expressJwt from 'express-jwt';
-import userService from './user/userService';
+import UserService from './user/userService';
 import { secret } from './constants';
+
+const userService = new UserService();
 
 function jwt()
 {

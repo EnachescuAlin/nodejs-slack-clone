@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const senderSchema = mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId(),
+        type: mongoose.Schema.Types.ObjectId,
         required: true
     },
     username: {

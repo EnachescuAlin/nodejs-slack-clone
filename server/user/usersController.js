@@ -2,7 +2,9 @@ import {
     Router
 } from 'express';
 const router = Router();
-import userService from './userService';
+import UserService from './userService';
+
+const userService = new UserService();
 
 router.post('/register', register);
 router.post('/login', login);
@@ -13,6 +15,8 @@ router.get('/:id', getById);
 router.get('/authenticated/current', getCurrent);
 
 router.put('/:id', update);
+
+router.delete('/:id', remove);
 
 function register(req, res, next) {
     const username = req.body.username;
@@ -75,10 +79,22 @@ function update(req, res, next) {
     const userId = req.params.id;
     const currentUser = req.user.sub;
     if (userId != currentUser)
-        res.status(401);
-    userService.update(userId, req.body)
-        .then(() => res.status(204).send())
-        .catch(err => next(err));
+        res.status(401).send();
+    else
+        userService.update(userId, req.body)
+            .then(() => res.status(204).send())
+            .catch(err => next(err));
+}
+
+function remove(req, res, next) {
+    const userId = req.params.id;
+    const currentUser = req.user.sub;
+    if (userId != currentUser)
+        res.status(401).send();
+    else
+        userService.remove(userId)
+            .then(() => res.status(204).send())
+            .catch(err => next(err));
 }
 
 export default router;

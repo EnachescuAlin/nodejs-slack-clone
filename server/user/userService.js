@@ -7,109 +7,103 @@ import {
     secret
 } from '../constants';
 
-async function createUser(user) {
-    const existingUser = await User.findOne({
-        'username': user.username
-    });
-    if (existingUser) {
-        throw 'Username "' + username + '" already exists';
-    }
+class UserService {
 
-    const newUser = new User();
-    newUser.username = user.username;
-    newUser.passwordHash = bcrypt.hashSync(user.password);
-    newUser.email = user.email;
-    newUser.firstname = user.firstname;
-    newUser.lastname = user.lastname;
-    await newUser.save();
-    return newUser.toDto();
-}
-
-async function login(username, password) {
-    const user = await User.findOne({
-        'username': username
-    });
-    if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
-        throw 'username or password is incorrect';
-    }
-
-    await User.findOneAndUpdate({
-        'username': username
-    }, {
-        $set: {
-            'online': true
+    async createUser(user) {
+        const existingUser = await User.findOne({
+            'username': user.username
+        });
+        if (existingUser) {
+            throw 'Username "' + username + '" already exists';
         }
-    });
 
-    const token = sign({
-        sub: user._id
-    }, secret);
-    return {
-        'token': token
-    };
-}
+        const newUser = new User();
+        newUser.username = user.username;
+        newUser.passwordHash = bcrypt.hashSync(user.password);
+        newUser.email = user.email;
+        newUser.firstname = user.firstname;
+        newUser.lastname = user.lastname;
+        await newUser.save();
+        return newUser.toDto();
+    }
 
-async function logout(userId) {
-    await User.findOneAndUpdate({
-        '_id': userId
-    }, {
-        $set: {
-            'online': false
+    async login(username, password) {
+        const user = await User.findOne({
+            'username': username
+        });
+        if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
+            throw 'username or password is incorrect';
         }
-    });
-}
 
-async function getAll() {
-    return (await User.find()).map(user => user.toDto());
-}
+        await User.findOneAndUpdate({
+            'username': username
+        }, {
+            $set: {
+                'online': true
+            }
+        });
 
-async function getById(userId) {
-    const user = await User.findOne({
-        '_id': userId
-    });
-    if (!user) {
-        throw 'not found user with id = ' + userId;
+        const token = sign({
+            sub: user._id
+        }, secret);
+        return {
+            'token': token
+        };
     }
-    return user.toDto();
-}
 
-async function getByUsername(userName) {
-    const user = await User.findOne({
-        'username': userName
-    });
-    if (!user) {
-        throw 'not found user with username = ' + userName;
+    async logout(userId) {
+        await User.findOneAndUpdate({
+            '_id': userId
+        }, {
+            $set: {
+                'online': false
+            }
+        });
     }
-    return user.toDto();
-}
 
-async function update(id, user) {
-    const existingUser = await User.findById(id);
-    if (!existingUser) throw 'User not found';
-    if (existingUser.username !== user.username && await User.findOne({ username: user.username })) {
-        throw 'Username "' + user.username + '" is already taken';
+    async getAll() {
+        return (await User.find()).map(user => user.toDto());
     }
-    if (user.password) {
-        existingUser.passwordHash = bcrypt.hashSync(user.password);
+
+    async getById(userId) {
+        const user = await User.findOne({
+            '_id': userId
+        });
+        if (!user) {
+            throw 'not found user with id = ' + userId;
+        }
+        return user.toDto();
     }
-    Object.assign(existingUser, user);
 
-    await existingUser.save();
-}
+    async getByUsername(userName) {
+        const user = await User.findOne({
+            'username': userName
+        });
+        if (!user) {
+            throw 'not found user with username = ' + userName;
+        }
+        return user.toDto();
+    }
 
-async function remove(id) {
-    const existingUser = await User.findById(id);
-    if (!existingUser) throw 'User not found';
-    await existingUser.remove();
-}
+    async update(id, user) {
+        const existingUser = await User.findById(id);
+        if (!existingUser) throw 'User not found';
+        if (existingUser.username !== user.username && await User.findOne({ username: user.username })) {
+            throw 'Username "' + user.username + '" is already taken';
+        }
+        if (user.password) {
+            existingUser.passwordHash = bcrypt.hashSync(user.password);
+        }
+        Object.assign(existingUser, user);
 
-export default {
-    createUser,
-    login,
-    logout,
-    getAll,
-    getById,
-    getByUsername,
-    update,
-    remove
+        await existingUser.save();
+    }
+
+    async remove(id) {
+        const existingUser = await User.findById(id);
+        if (!existingUser) throw 'User not found';
+        await existingUser.remove();
+    }
 };
+
+export default UserService;
