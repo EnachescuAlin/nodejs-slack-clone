@@ -95,10 +95,105 @@ async function leave(channelId, userId)
     }
 }
 
+async function invite(channelId, userId, guestId)
+{
+    if (userId.equals(guestId)) {
+        throw 'userId and guestId are equal';
+    }
+
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+        throw 'not found channel with id = ' + channelId;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        throw 'not found user with id = ' + userId;
+    }
+
+    const guest = await User.findById(guestId);
+    if (!guest) {
+        throw 'not found user with id = ' + guestId;
+    }
+
+    if (! await channel.members.find(obj => obj.equals(userId))) {
+        throw 'user cannot invite';
+    }
+
+    if (await channel.members.find(obj => obj.equals(guestId))) {
+        throw 'guest already joined in this channel';
+    }
+
+    await guest.channels.push(channelId);
+    await channel.members.push(guestId);
+
+    await guest.save();
+    await channel.save();
+}
+
+async function kickout(channelId, userId, memberId)
+{
+    if (userId.equals(memberId)) {
+        throw 'userId and memberId are equal';
+    }
+
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+        throw 'not found channel with id = ' + channelId;
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+        throw 'not found user with id = ' + userId;
+    }
+
+    const member = await User.findById(memberId);
+    if (!member) {
+        throw 'not found user with id = ' + memberId;
+    }
+
+    if (! await channel.members.find(obj => obj.equals(userId))) {
+        throw 'user not joined in this channel';
+    }
+
+    if (! await channel.members.find(obj => obj.equals(memberId))) {
+        throw 'member not joined in this channel';
+    }
+
+    member.channels = await member.channels.filter(obj => !obj.equals(channelId));
+    channel.members = await channel.members.filter(obj => !obj.equals(memberId));
+
+    await member.save();
+    await channel.save();
+}
+
+async function changeDescription(channelId, userId, newDescription)
+{
+    const channel = await Channel.findById(channelId);
+    if (!channel) {
+        throw 'not found channel with id = ' + channelId;
+    }
+
+    if (! await channel.members.find(obj => obj.equals(userId))) {
+        throw 'user cannot change description';
+    }
+
+    if (newDescription) {
+        channel.description = newDescription;
+    } else {
+        channel.description = "";
+    }
+
+    await channel.save();
+}
+
 export default {
     createChannel,
     getPublicChannels,
     getChannelById,
     join,
-    leave
+    leave,
+    invite,
+    kickout,
+    changeDescription
 };
