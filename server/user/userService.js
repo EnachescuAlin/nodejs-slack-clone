@@ -6,6 +6,8 @@ import * as bcrypt from 'bcryptjs';
 import {
     secret
 } from '../constants';
+import NotFoundError from '../errors/notFoundError';
+import mongoose from 'mongoose';
 
 class UserService {
 
@@ -66,13 +68,16 @@ class UserService {
     }
 
     async getById(userId) {
-        const user = await User.findOne({
-            '_id': userId
-        });
-        if (!user) {
-            throw 'not found user with id = ' + userId;
-        }
-        return user.toDto();
+        if (mongoose.Types.ObjectId.isValid(userId)) {
+            const user = await User.findOne({
+                '_id': userId
+            });
+            if (!user) {
+                throw new NotFoundError(`User with id ${userId} was not found`);
+            }
+            return user.toDto();
+        } else
+            throw new NotFoundError(`User with id ${userId} was not found`);
     }
 
     async getByUsername(userName) {
@@ -80,15 +85,17 @@ class UserService {
             'username': userName
         });
         if (!user) {
-            throw 'not found user with username = ' + userName;
+            throw new NotFoundError(`User with username ${userName} was not found`);
         }
         return user.toDto();
     }
 
     async update(id, user) {
         const existingUser = await User.findById(id);
-        if (!existingUser) throw 'User not found';
-        if (existingUser.username !== user.username && await User.findOne({ username: user.username })) {
+        if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);
+        if (existingUser.username !== user.username && await User.findOne({
+                username: user.username
+            })) {
             throw 'Username "' + user.username + '" is already taken';
         }
         if (user.password) {
@@ -101,7 +108,7 @@ class UserService {
 
     async remove(id) {
         const existingUser = await User.findById(id);
-        if (!existingUser) throw 'User not found';
+        if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);
         await existingUser.remove();
     }
 };

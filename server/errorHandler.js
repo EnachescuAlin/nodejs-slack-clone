@@ -1,22 +1,18 @@
-function errorHandler(err, req, res, next)
+export default function errorHandler(err, req, res, next)
 {
     if (typeof (err) === 'string') {
         // custom application error
-        return res.status(400).json({ error: err });
-    }
-
-    if (err.name === 'ValidationError') {
-        // mongoose validation error
         return res.status(400).json({ error: err.message });
     }
 
-    if (err.name === 'UnauthorizedError') {
-        // jwt authentication error
-        return res.status(401).json({ error: 'Invalid Token' });
+    switch (err.name) {
+        case 'NotFoundError':
+            return res.status(404).json({ error: err.message });
+        case 'ValidationError':
+            return res.status(400).json({ error: err.message });
+        case 'UnauthorizedError':
+            return res.status(401).json({ error: 'Invalid Token' });       
+        default:
+            return res.status(500).json({ error: err.message });
     }
-
-    // default to 500 server error
-    return res.status(500).json({ error: err.message });
 }
-
-module.exports = errorHandler;
