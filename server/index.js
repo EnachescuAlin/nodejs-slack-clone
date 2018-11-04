@@ -1,16 +1,25 @@
 import http from 'http';
-import express, { json } from 'express';
+import express, {
+    json
+} from 'express';
 import errorHandler from './errorHandler';
 import jwt from './jwt';
+
 import userController from './user/usersController';
 import channelController from './channel/channelsController';
+import messagesController from './message/messageController';
+
 import mongoose from 'mongoose';
 
-async function init()
-{
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.json';
+
+async function init() {
     await mongoose.set('useCreateIndex', true)
     await mongoose.set('useFindAndModify', false);
-    await mongoose.connect('mongodb://localhost/slack_clone_db', { useNewUrlParser: true }, (err) => {
+    await mongoose.connect('mongodb://localhost/slack_clone_db', {
+        useNewUrlParser: true
+    }, (err) => {
         if (err) {
             console.log('connect to database failed =', err);
         } else {
@@ -25,11 +34,14 @@ const app = express(http);
 
 app.use(json());
 
-app.use(jwt());
+app.use('/api', jwt());
+
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // api routes
 app.use('/api/users', userController);
 app.use('/api/channels', channelController);
+app.use('/api/messages', messagesController);
 
 // global error handler
 app.use(errorHandler);

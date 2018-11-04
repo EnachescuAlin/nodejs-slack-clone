@@ -1,0 +1,457 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API Documentation for Slack Clone API",
+    "version": "1.0.0",
+    "title": "Swagger Slack Clone API"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api",
+  "tags": [{
+      "name": "users"
+    },
+    {
+      "name": "messages"
+    },
+    {
+      "name": "channels"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get all users",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get user by id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "remove an user by id",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "type": "string"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/users/authenticated/current": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get logged in user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Register a new user",
+        "operationId": "addUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "User object to be added",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/User"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Login user",
+        "description": "",
+        "operationId": "loginUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "Login object",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Login"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Logoff user",
+        "description": "",
+        "operationId": "logoffUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/users/{id}/": {
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update an existing user",
+        "description": "",
+        "operationId": "updateUser",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Username already taken"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/messages": {
+      "get": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Get all messages",
+        "operationId": "getMessages",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "senderId",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "receiverId",
+            "in": "query",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      },
+      "post": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Add a new message",
+        "operationId": "addMessage",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Message"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/messages/channel/{channelId}": {
+      "get": {
+        "tags": [
+          "messages"
+        ],
+        "summary": "Get messages by channel",
+        "operationId": "getMessagesByChannel",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "page",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "type": "integer"
+          },
+          {
+            "name": "channelId",
+            "in": "path",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "jwt": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Login": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "sender": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            }
+          }
+        },
+        "receiver": {
+          "type": "object",
+          "properties": {
+            "channelId": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            }
+          }
+        },
+        "text": {
+          "type": "string"
+        },
+        "addDate": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
