@@ -4,8 +4,11 @@ import express, {
 } from 'express';
 import errorHandler from './errorHandler';
 import jwt from './jwt';
-import usersController from './user/usersController';
+
+import userController from './user/usersController';
+import channelController from './channel/channelsController';
 import messagesController from './message/messageController';
+
 import mongoose from 'mongoose';
 
 import swaggerUi from 'swagger-ui-express';
@@ -36,7 +39,8 @@ app.use('/api', jwt());
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // api routes
-app.use('/api/users', usersController);
+app.use('/api/users', userController);
+app.use('/api/channels', channelController);
 app.use('/api/messages', messagesController);
 
 // global error handler
