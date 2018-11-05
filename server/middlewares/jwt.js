@@ -1,6 +1,6 @@
 import expressJwt from 'express-jwt';
-import UserService from './user/userService';
-import { secret } from './constants';
+import UserService from '../user/userService';
+import { secret } from '../constants';
 
 const userService = new UserService();
 

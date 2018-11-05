@@ -80,10 +80,19 @@ function update(req, res, next) {
     const currentUser = req.user.sub;
     if (userId != currentUser)
         res.status(401).send();
-    else
-        userService.update(userId, req.body)
+    else {
+        var user = {
+            username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            password: req.body.password,
+            email: req.body.email,
+            status: req.body.status
+        }
+        userService.update(userId, user)
             .then(() => res.status(204).send())
             .catch(err => next(err));
+    }
 }
 
 function remove(req, res, next) {

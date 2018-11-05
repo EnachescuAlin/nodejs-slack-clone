@@ -1,18 +1,20 @@
 import { Router } from 'express';
 const router = Router();
 
-import channelService from './channelService';
+import ChannelService from './channelService';
 
-router.post('/create', createChannel);
-router.post('/join/:id', join);
-router.post('/leave/:id', leave);
-router.post('/invite/:id/:userId', invite);
-router.post('/kickout/:id/:userId', kickout);
+const channelService = new ChannelService();
+
+router.post('/', createChannel);
+router.post('/:id/joinRequests', join);
+router.post('/:id/invitations', invite);
 
 router.get('/', getChannels);
-router.get('/byId/:id', getChannelById);
+router.get('/:id', getChannelById);
 
-router.put('/changeDescription/:id', changeDescription);
+router.put('/:id', update);
+
+router.delete('/:id/participants/:userId', kickout);
 
 function createChannel(req, res, next)
 {
@@ -50,19 +52,10 @@ function join(req, res, next)
         .catch(err => next(err));
 }
 
-function leave(req, res, next)
-{
-    const channelId = req.params.id;
-    const userId = req.user.sub;
-    channelService.leave(channelId, userId)
-        .then(() => res.json({}))
-        .catch(err => next(err));
-}
-
 function invite(req, res, next)
 {
     const channelId = req.params.id;
-    const guestId = req.params.userId;
+    const guestId = req.body.receiverId;
     const userId = req.user.sub;
     channelService.invite(channelId, userId, guestId)
         .then(() => res.json({}))
@@ -79,12 +72,16 @@ function kickout(req, res, next)
         .catch(err => next(err));
 }
 
-function changeDescription(req, res, next)
+function update(req, res, next)
 {
     const channelId = req.params.id;
     const userId = req.user.sub;
-    const newDescription = req.body.description;
-    channelService.changeDescription(channelId, userId, newDescription)
+    const channel = {
+        name: req.body.name,
+        description: req.body.description,
+        isPublic: req.body.isPublic
+    };
+    channelService.update(channelId, channel,userId)
         .then(() => res.json({}))
         .catch(err => next(err));
 }
