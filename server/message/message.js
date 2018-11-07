@@ -9,7 +9,7 @@ const senderSchema = mongoose.Schema({
         type: mongoose.Schema.Types.String,
         required: true
     }
-});
+}, { _id : false });
 
 const receiverSchema = mongoose.Schema({
     channelId: {
@@ -18,7 +18,7 @@ const receiverSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId
     }
-})
+}, { _id : false });
 
 const messageSchema = mongoose.Schema({
     _id: {
@@ -38,14 +38,13 @@ const messageSchema = mongoose.Schema({
         default: Date.now
     }
 });
-
+              
 messageSchema.methods.toDto = function () {
     return {
         id: this._id,
         sender: this.sender,
         text: this.text,
-        channelId: this.receiver.channelId,
-        userId: this.receiver.userId
+        receiver: this.receiver
     }
 }
 

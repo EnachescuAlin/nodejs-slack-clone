@@ -44,7 +44,12 @@ const userSchema = new mongoose.Schema({
     online: {
         type: mongoose.Schema.Types.Boolean,
         default: false
-    }
+    },
+    directMessages: [
+        {
+            type: mongoose.Schema.Types.ObjectId
+        }
+    ]
 });
 
 userSchema.methods.toDto = function() {
@@ -56,7 +61,8 @@ userSchema.methods.toDto = function() {
       registerDate: this.registerDate,
       email: this.email,
       channels: this.channels,
-      online: this.online
+      online: this.online,
+      directMessages: this.directMessages
     };
 };
 

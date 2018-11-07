@@ -7,9 +7,8 @@ import {
     secret
 } from '../constants';
 import NotFoundError from '../errors/notFoundError';
-import mongoose, {
-    ValidationError
-} from 'mongoose';
+import mongoose from 'mongoose';
+import ProcessEntityError from '../errors/processEntityError';
 
 class UserService {
 
@@ -18,7 +17,7 @@ class UserService {
             'username': user.username
         });
         if (existingUser) {
-            throw new ValidationError(`Username ${username} already exists`);
+            throw new ProcessEntityError(`Username ${username} already exists`);
         }
 
         const newUser = new User();
@@ -36,7 +35,7 @@ class UserService {
             'username': username
         });
         if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
-            throw new ValidationError('username or password is incorrect');
+            throw new ProcessEntityError('username or password is incorrect');
         }
 
         await User.findOneAndUpdate({
@@ -48,7 +47,8 @@ class UserService {
         });
 
         const token = sign({
-            sub: user._id
+            sub: user._id,
+            name: user.username
         }, secret);
         return {
             'token': token
@@ -96,7 +96,7 @@ class UserService {
         if (existingUser.username !== user.username && await User.findOne({
                 username: user.username
             })) {
-            throw new ValidationError('Username "' + user.username + '" is already taken');
+            throw new ProcessEntityError('Username "' + user.username + '" is already taken');
         }
         if (user.password) {
             existingUser.passwordHash = bcrypt.hashSync(user.password);

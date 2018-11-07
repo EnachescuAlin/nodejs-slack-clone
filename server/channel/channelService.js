@@ -1,10 +1,9 @@
 import Channel from './channel';
 import User from '../user/user';
-import mongoose, {
-    ValidationError
-} from 'mongoose';
+import mongoose from 'mongoose';
 import NotFoundError from '../errors/notFoundError';
 import ForbiddenError from '../errors/forbiddenError';
+import ProcessEntityError from '../errors/processEntityError';
 
 export default class ChannelService {
 
@@ -13,7 +12,7 @@ export default class ChannelService {
             'name': name
         });
         if (existingChannel) {
-            throw new ValidationError(`Name ${name} already exists`);
+            throw new ProcessEntityError(`Name ${name} already exists`);
         }
 
         const newChannel = new Channel();
@@ -68,7 +67,7 @@ export default class ChannelService {
         }
 
         if (await channel.members.find(obj => obj.equals(userId))) {
-            throw new ValidationError('You already joined this channel');
+            throw new ProcessEntityError('You already joined this channel');
         }
 
         await user.channels.push(channelId);
@@ -78,8 +77,8 @@ export default class ChannelService {
     }
 
     async invite(channelId, userId, guestId) {
-        if (userId.equals(guestId)) {
-            throw new ValidationError('You cannot invite yourself');
+        if (userId === guestId) {
+            throw new ProcessEntityError('You cannot invite yourself');
         }
 
         const channel = mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
@@ -98,11 +97,11 @@ export default class ChannelService {
         }
 
         if (!await channel.members.find(obj => obj.equals(userId))) {
-            throw new ValidationError('You cannot invite users in this channel');
+            throw new ProcessEntityError('You cannot invite users in this channel');
         }
 
         if (await channel.members.find(obj => obj.equals(guestId))) {
-            throw new ValidationError('Guest already joined this channel');
+            throw new ProcessEntityError('Guest already joined this channel');
         }
 
         await guest.channels.push(channelId);
@@ -128,15 +127,15 @@ export default class ChannelService {
         }
 
         if (!await channel.members.find(obj => obj.equals(userId))) {
-            throw new ValidationError('You have not joined this channel');
+            throw new ProcessEntityError('You have not joined this channel');
         }
 
         if (!await channel.members.find(obj => obj.equals(memberId))) {
-            throw new ValidationError(`Member with id = ${memberId} has not joined this channel`);
+            throw new ProcessEntityError(`Member with id = ${memberId} has not joined this channel`);
         }
 
         if (channel.createdBy.equals(memberId)) {
-            throw new ValidationError('You cannot kickout the owner of the channel');
+            throw new ProcessEntityError('You cannot kickout the owner of the channel');
         }
 
         if (!channel.createdBy.equals(userId)) {
@@ -159,7 +158,7 @@ export default class ChannelService {
         if (existingChannel.name !== channel.name && await User.findOne({
                 name: channel.name
             })) {
-            throw new ValidationError(`This name is already taken`);
+            throw new ProcessEntityError(`This name is already taken`);
         }
         Object.assign(existingChannel, channel);
 

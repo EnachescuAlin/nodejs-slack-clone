@@ -6,7 +6,7 @@ import ChannelService from './channelService';
 const channelService = new ChannelService();
 
 router.post('/', createChannel);
-router.post('/:id/joinRequests', join);
+router.post('/:id/participants', join);
 router.post('/:id/invitations', invite);
 
 router.get('/', getChannels);
@@ -48,7 +48,7 @@ function join(req, res, next)
     const channelId = req.params.id;
     const userId = req.user.sub;
     channelService.join(channelId, userId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 
@@ -58,7 +58,7 @@ function invite(req, res, next)
     const guestId = req.body.receiverId;
     const userId = req.user.sub;
     channelService.invite(channelId, userId, guestId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 
@@ -68,7 +68,7 @@ function kickout(req, res, next)
     const memberId = req.params.userId;
     const userId = req.user.sub;
     channelService.kickout(channelId, userId, memberId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 
@@ -81,8 +81,9 @@ function update(req, res, next)
         description: req.body.description,
         isPublic: req.body.isPublic
     };
+    Object.keys(channel).forEach(key => channel[key] === undefined && delete channel[key]);
     channelService.update(channelId, channel,userId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 

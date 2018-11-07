@@ -8,7 +8,7 @@ export default function errorHandler(err, req, res, next)
     switch (err.name) {
         case 'NotFoundError':
             return res.status(404).json({ error: err.message });
-        case 'ValidationError':
+        case 'ProcessEntityError':
             return res.status(422).json({ error: err.message });
         case 'BadRequestError':
             return res.status(400).json({ error: err.message });

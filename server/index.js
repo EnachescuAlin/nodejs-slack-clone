@@ -2,8 +2,8 @@ import http from 'http';
 import express, {
     json
 } from 'express';
-import errorHandler from './errorHandler';
-import jwt from './jwt';
+import errorHandler from './middlewares/errorHandler';
+import jwt from './middlewares/jwt';
 
 import userController from './user/usersController';
 import channelController from './channel/channelsController';
