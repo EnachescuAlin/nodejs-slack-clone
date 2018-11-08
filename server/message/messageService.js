@@ -18,11 +18,15 @@ class MessageService {
                 throw new ForbiddenError(`You are not a member of this channel`);
             receiver.channelId = message.channelId;
         } else if (message.receiverId) {
-            var user = User.findById(sender.userId);
+            var user = await User.findById(sender.userId);
             var userReceiver = mongoose.Types.ObjectId.isValid(message.receiverId) ? await User.findById(message.receiverId) : null;
-            if (userReceiver)
+            if (!userReceiver)
                 throw new ProcessEntityError(`You cannot send a direct message to an unknown user`);
             if (userReceiver.directMessages.filter(x => x.equals(message.receiverId)).length == 0) {
+                if (!userReceiver.directMessages)
+                    userReceiver.directMessages = [];
+                if (!user.directMessages)
+                    user.directMessages = [];
                 userReceiver.directMessages.push(sender.userId);
                 user.directMessages.push(message.receiverId);
                 await userReceiver.save();

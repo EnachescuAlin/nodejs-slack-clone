@@ -44,7 +44,8 @@ messageSchema.methods.toDto = function () {
         id: this._id,
         sender: this.sender,
         text: this.text,
-        receiver: this.receiver
+        receiver: this.receiver,
+        addDate: this.addDate
     }
 }
 
