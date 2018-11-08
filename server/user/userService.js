@@ -8,6 +8,7 @@ import {
 } from '../constants';
 import NotFoundError from '../errors/notFoundError';
 import mongoose from 'mongoose';
+import ProcessEntityError from '../errors/processEntityError';
 
 class UserService {
 
@@ -16,7 +17,7 @@ class UserService {
             'username': user.username
         });
         if (existingUser) {
-            throw 'Username "' + username + '" already exists';
+            throw new ProcessEntityError(`Username ${username} already exists`);
         }
 
         const newUser = new User();
@@ -34,7 +35,7 @@ class UserService {
             'username': username
         });
         if (!user || !bcrypt.compareSync(password, user.passwordHash)) {
-            throw 'username or password is incorrect';
+            throw new ProcessEntityError('username or password is incorrect');
         }
 
         await User.findOneAndUpdate({
@@ -46,7 +47,8 @@ class UserService {
         });
 
         const token = sign({
-            sub: user._id
+            sub: user._id,
+            name: user.username
         }, secret);
         return {
             'token': token
@@ -68,16 +70,14 @@ class UserService {
     }
 
     async getById(userId) {
-        if (mongoose.Types.ObjectId.isValid(userId)) {
-            const user = await User.findOne({
+        const user = mongoose.Types.ObjectId.isValid(userId) ? 
+            await User.findOne({
                 '_id': userId
-            });
-            if (!user) {
-                throw new NotFoundError(`User with id ${userId} was not found`);
-            }
-            return user.toDto();
-        } else
+            }) : null;
+        if (!user) {
             throw new NotFoundError(`User with id ${userId} was not found`);
+        }
+        return user.toDto();
     }
 
     async getByUsername(userName) {
@@ -91,12 +91,12 @@ class UserService {
     }
 
     async update(id, user) {
-        const existingUser = await User.findById(id);
+        const existingUser = mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
         if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);
         if (existingUser.username !== user.username && await User.findOne({
                 username: user.username
             })) {
-            throw 'Username "' + user.username + '" is already taken';
+            throw new ProcessEntityError('Username "' + user.username + '" is already taken');
         }
         if (user.password) {
             existingUser.passwordHash = bcrypt.hashSync(user.password);
@@ -107,7 +107,7 @@ class UserService {
     }
 
     async remove(id) {
-        const existingUser = await User.findById(id);
+        const existingUser = mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
         if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);
         await existingUser.remove();
     }

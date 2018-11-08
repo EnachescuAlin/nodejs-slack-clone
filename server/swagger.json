@@ -38,6 +38,12 @@
             "description": "Unauthorized"
           }
         },
+        "parameters": [{
+          "name": "username",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        }],
         "security": [{
           "jwt": []
         }]
@@ -273,22 +279,26 @@
         "parameters": [{
             "name": "page",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "required": false
           },
           {
             "name": "pageSize",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "required": false
           },
           {
             "name": "senderId",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "required": false
           },
           {
             "name": "receiverId",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "required": false
           }
         ],
         "responses": {
@@ -349,17 +359,19 @@
         "parameters": [{
             "name": "page",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "required": false
           },
           {
             "name": "pageSize",
             "in": "query",
-            "type": "integer"
+            "type": "integer",
+            "required": false
           },
           {
             "name": "channelId",
             "in": "path",
-            "type": "integer",
+            "type": "string",
             "required": true
           }
         ],
@@ -369,6 +381,283 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/channels": {
+      "get": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Get channels",
+        "operationId": "getChannels",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      },
+      "post": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Add a new channel",
+        "operationId": "addChannel",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "name": "body",
+          "in": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Channel"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/channels/{id}": {
+      "get": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Get channel by id",
+        "description": "",
+        "operationId": "getChannelById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Channel not found"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      },
+      "put": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Update an existing channel",
+        "description": "",
+        "operationId": "updateChannel",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Channel object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Channel"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Validation Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Channel not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/channels/{id}/participants": {
+      "post": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Add an user to this channel",
+        "description": "",
+        "operationId": "addJoinRequest",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Validation Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Channel not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/channels/{id}/invitations": {
+      "post": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Create an invitation for a user to join this channel",
+        "description": "",
+        "operationId": "addInvitation",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Invitation"
+            }
+          } 
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Validation Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Channel not found"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [{
+          "jwt": []
+        }]
+      }
+    },
+    "/channels/{id}/participants/{participantId}": {
+      "delete": {
+        "tags": [
+          "channels"
+        ],
+        "summary": "Remove an user from this channel",
+        "description": "",
+        "operationId": "deleteParticinat",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }, {
+            "name": "participantId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "422": {
+            "description": "Validation Error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Channel not found"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         },
         "security": [{
@@ -416,35 +705,38 @@
         }
       }
     },
-    "Message": {
+    "Channel": {
       "type": "object",
       "properties": {
-        "sender": {
-          "type": "object",
-          "properties": {
-            "userId": {
-              "type": "string"
-            },
-            "username": {
-              "type": "string"
-            }
-          }
-        },
-        "receiver": {
-          "type": "object",
-          "properties": {
-            "channelId": {
-              "type": "string"
-            },
-            "userId": {
-              "type": "string"
-            }
-          }
-        },
-        "text": {
+        "name": {
           "type": "string"
         },
-        "addDate": {
+        "description": {
+          "type": "string"
+        },
+        "isPublic": {
+          "type": "string"
+        }
+      }
+    },
+    "Invitation": {
+      "type": "object",
+      "properties": {
+        "receiverId": {
+          "type": "string"
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "properties": {        
+        "receiverId": {
+          "type": "string"
+        },
+        "channelId": {
+          "type": "string"
+        },
+        "text": {
           "type": "string"
         }
       }

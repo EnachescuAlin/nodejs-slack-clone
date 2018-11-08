@@ -1,18 +1,20 @@
 import { Router } from 'express';
 const router = Router();
 
-import channelService from './channelService';
+import ChannelService from './channelService';
 
-router.post('/create', createChannel);
-router.post('/join/:id', join);
-router.post('/leave/:id', leave);
-router.post('/invite/:id/:userId', invite);
-router.post('/kickout/:id/:userId', kickout);
+const channelService = new ChannelService();
+
+router.post('/', createChannel);
+router.post('/:id/participants', join);
+router.post('/:id/invitations', invite);
 
 router.get('/', getChannels);
-router.get('/byId/:id', getChannelById);
+router.get('/:id', getChannelById);
 
-router.put('/changeDescription/:id', changeDescription);
+router.put('/:id', update);
+
+router.delete('/:id/participants/:userId', kickout);
 
 function createChannel(req, res, next)
 {
@@ -46,26 +48,17 @@ function join(req, res, next)
     const channelId = req.params.id;
     const userId = req.user.sub;
     channelService.join(channelId, userId)
-        .then(() => res.json({}))
-        .catch(err => next(err));
-}
-
-function leave(req, res, next)
-{
-    const channelId = req.params.id;
-    const userId = req.user.sub;
-    channelService.leave(channelId, userId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 
 function invite(req, res, next)
 {
     const channelId = req.params.id;
-    const guestId = req.params.userId;
+    const guestId = req.body.receiverId;
     const userId = req.user.sub;
     channelService.invite(channelId, userId, guestId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 
@@ -75,17 +68,22 @@ function kickout(req, res, next)
     const memberId = req.params.userId;
     const userId = req.user.sub;
     channelService.kickout(channelId, userId, memberId)
-        .then(() => res.json({}))
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 
-function changeDescription(req, res, next)
+function update(req, res, next)
 {
     const channelId = req.params.id;
     const userId = req.user.sub;
-    const newDescription = req.body.description;
-    channelService.changeDescription(channelId, userId, newDescription)
-        .then(() => res.json({}))
+    const channel = {
+        name: req.body.name,
+        description: req.body.description,
+        isPublic: req.body.isPublic
+    };
+    Object.keys(channel).forEach(key => channel[key] === undefined && delete channel[key]);
+    channelService.update(channelId, channel,userId)
+        .then(() => res.status(204).json({}))
         .catch(err => next(err));
 }
 

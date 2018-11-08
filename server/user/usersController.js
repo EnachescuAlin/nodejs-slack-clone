@@ -19,18 +19,14 @@ router.put('/:id', update);
 router.delete('/:id', remove);
 
 function register(req, res, next) {
-    const username = req.body.username;
-    const password = req.body.password;
-    const email = req.body.email;
-    const firstname = req.body.firstname;
-    const lastname = req.body.lastname;
-    userService.createUser({
-            username,
-            password,
-            email,
-            firstname,
-            lastname
-        })
+    let user = {
+        username: req.body.username,
+        password: req.body.password,
+        email: req.body.email,
+        firstname: req.body.firstName,
+        lastname: req.body.lastName
+    };
+    userService.createUser(user)
         .then((newUser) => res.json(newUser))
         .catch(err => next(err));
 }
@@ -80,10 +76,20 @@ function update(req, res, next) {
     const currentUser = req.user.sub;
     if (userId != currentUser)
         res.status(401).send();
-    else
-        userService.update(userId, req.body)
+    else {
+        var user = {
+            username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            password: req.body.password,
+            email: req.body.email,
+            status: req.body.status
+        }
+        Object.keys(user).forEach(key => user[key] === undefined && delete user[key]);
+        userService.update(userId, user)
             .then(() => res.status(204).send())
             .catch(err => next(err));
+    }
 }
 
 function remove(req, res, next) {
