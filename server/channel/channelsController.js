@@ -7,7 +7,7 @@ const channelService = new ChannelService();
 
 router.post('/', createChannel);
 router.post('/:id/participants', join);
-router.post('/:id/invitations', invite);
+router.post('/:id/participants/:guestId', invite);
 
 router.get('/', getChannels);
 router.get('/:id', getChannelById);
@@ -55,7 +55,7 @@ function join(req, res, next)
 function invite(req, res, next)
 {
     const channelId = req.params.id;
-    const guestId = req.body.receiverId;
+    const guestId = req.params.guestId;
     const userId = req.user.sub;
     channelService.invite(channelId, userId, guestId)
         .then(() => res.status(204).json({}))
