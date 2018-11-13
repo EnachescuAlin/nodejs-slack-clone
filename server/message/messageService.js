@@ -8,37 +8,87 @@ import ProcessEntityError from '../errors/processEntityError';
 
 class MessageService {
     async add(message, sender) {
+        if (message.channelId) {
+            return await this.addToChannel(message, sender);
+        }
+        if (message.receiverId) {
+            return await this.addToPrivateConversation(message, sender);
+        }
+
+        throw new ProcessEntityError('Neither channelId nor receiverId are set');
+    }
+
+    async addToChannel(message, sender) {
         var newMessage = new Message();
         var receiver = {};
-        if (message.channelId) {
-            var channel = mongoose.Types.ObjectId.isValid(message.channelId) ? await Channel.findById(message.channelId) : null;
-            if (!channel)
-                throw new ProcessEntityError(`Channel with id = ${message.channelId} does not exist`);
-            if (channel.members.filter(elem => elem.equals(sender.userId)).length == 0)
-                throw new ForbiddenError(`You are not a member of this channel`);
-            receiver.channelId = message.channelId;
-        } else if (message.receiverId) {
-            var user = await User.findById(sender.userId);
-            var userReceiver = mongoose.Types.ObjectId.isValid(message.receiverId) ? await User.findById(message.receiverId) : null;
-            if (!userReceiver)
-                throw new ProcessEntityError(`You cannot send a direct message to an unknown user`);
-            if (userReceiver.directMessages.filter(x => x.equals(message.receiverId)).length == 0) {
-                if (!userReceiver.directMessages)
-                    userReceiver.directMessages = [];
-                if (!user.directMessages)
-                    user.directMessages = [];
-                userReceiver.directMessages.push(sender.userId);
-                user.directMessages.push(message.receiverId);
-                await userReceiver.save();
-                await user.save();
+        var channel = mongoose.Types.ObjectId.isValid(message.channelId)
+            ? await Channel.findById(message.channelId)
+            : null;
+
+        if (!channel)
+            throw new ProcessEntityError(`Channel with id = ${message.channelId} does not exist`);
+
+        if (channel.members.filter(elem => elem.equals(sender.userId)).length === 0)
+            throw new ForbiddenError(`You are not a member of this channel`);
+
+        receiver.channelId = message.channelId;
+
+        Object.assign(
+            newMessage,
+            {
+                ...message,
+                receiver,
+                sender
             }
-            receiver.userId = message.receiverId;
-        }
-        Object.assign(newMessage, { ...message,
-            receiver,
-            sender
-        });
+        );
+
         await newMessage.save();
+
+        return newMessage.toDto();
+    }
+
+    async addToPrivateConversation(message, sender) {
+        var newMessage = new Message();
+        var receiver = {};
+        var user = await User.findById(sender.userId);
+        var userReceiver = mongoose.Types.ObjectId.isValid(message.receiverId)
+            ? await User.findById(message.receiverId)
+            : null;
+
+        if (!userReceiver)
+            throw new ProcessEntityError(`You cannot send a direct message to an unknown user`);
+
+        if (await userReceiver.directMessages.filter(x => x.equals(sender.userId)).length === 0) {
+            if (!userReceiver.directMessages)
+                userReceiver.directMessages = [];
+
+            userReceiver.directMessages.push(sender.userId);
+
+            await userReceiver.save();
+        }
+
+        if (await user.directMessages.filter(x => x.equals(message.receiverId)).length === 0) {
+            if (!user.directMessages)
+                user.directMessages = [];
+
+            user.directMessages.push(message.receiverId);
+
+            await user.save();
+        }
+
+        receiver.userId = message.receiverId;
+
+        Object.assign(
+            newMessage,
+            {
+                ...message,
+                receiver,
+                sender
+            }
+        );
+
+        await newMessage.save();
+
         return newMessage.toDto();
     }
 
