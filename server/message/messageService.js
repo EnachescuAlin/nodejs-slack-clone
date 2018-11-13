@@ -116,8 +116,16 @@ class MessageService {
         if (!mongoose.Types.ObjectId.isValid(receiverId))
             throw new NotFoundError(`Cannot find the receiver with id = ${receiverId}`);
         var query = Message.find({
-            'receiver.userId': receiverId,
-            'sender.userId': senderId
+            $or: [
+                {
+                    'receiver.userId': receiverId,
+                    'sender.userId': senderId
+                },
+                {
+                    'receiver.userId': senderId,
+                    'sender.userId': receiverId
+                }
+            ]
         }).sort('-addDate');
         if (limit)
             query = query.skip(offset).limit(limit);
