@@ -527,57 +527,14 @@
         }]
       }
     },
-    "/channels/{id}/participants": {
+    "/channels/{id}/participants/{participantId}": {
       "post": {
         "tags": [
           "channels"
         ],
         "summary": "Add an user to this channel",
         "description": "",
-        "operationId": "addJoinRequest",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [{
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "422": {
-            "description": "Validation Error"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Channel not found"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        },
-        "security": [{
-          "jwt": []
-        }]
-      }
-    },
-    "/channels/{id}/invitations": {
-      "post": {
-        "tags": [
-          "channels"
-        ],
-        "summary": "Create an invitation for a user to join this channel",
-        "description": "",
-        "operationId": "addInvitation",
+        "operationId": "addUserToChannel",
         "consumes": [
           "application/json"
         ],
@@ -590,12 +547,10 @@
             "required": true,
             "type": "string"
           }, {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Invitation"
-            }
+            "name": "participantId",
+            "in": "path",
+            "required": false,
+            "type": "string"
           } 
         ],
         "responses": {
@@ -618,9 +573,7 @@
         "security": [{
           "jwt": []
         }]
-      }
-    },
-    "/channels/{id}/participants/{participantId}": {
+      },
       "delete": {
         "tags": [
           "channels"
@@ -715,14 +668,6 @@
           "type": "string"
         },
         "isPublic": {
-          "type": "string"
-        }
-      }
-    },
-    "Invitation": {
-      "type": "object",
-      "properties": {
-        "receiverId": {
           "type": "string"
         }
       }
