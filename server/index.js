@@ -4,6 +4,8 @@ import express, {
 } from 'express';
 import errorHandler from './middlewares/errorHandler';
 import jwt from './middlewares/jwt';
+import addWebpackHotMiddleware from './middlewares/webpackMiddleware';
+import path from 'path';
 
 import userController from './user/usersController';
 import channelController from './channel/channelsController';
@@ -46,8 +48,19 @@ app.use('/api/messages', messagesController);
 // global error handler
 app.use(errorHandler);
 
+// client app
+app.use('/public', express.static(path.resolve(__dirname, '../client/public')));
+
+if (process.env.NODE_ENV == 'development') {
+    addWebpackHotMiddleware(app);
+} else {
+    app.use('*', (_, res) => {
+        res.sendFile(path.join(__dirname, '../client', 'index.html'));
+    });
+}
+
 // start server
 const port = 3000;
-const server = app.listen(port, function () {
+app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
