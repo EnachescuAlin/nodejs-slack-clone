@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
-    "start": "npm run build && node dist/server/index.js"
+    "build:server": "rimraf dist/server && babel ./server --out-dir dist/server --copy-files",
+    "build:client": "rimraf dist/client && webpack --config ./server/webpack.prod.js",
+    "start:server:dev": "set NODE_ENV=development&& npm run build:server && node dist/server/index.js",
+    "start:server": "set NODE_ENV=production&& npm run build:server && node dist/server/index.js",
+    "start": "npm-run-all --parallel start:server build:client"
   },
   "repository": {
     "type": "git",
@@ -17,21 +19,56 @@
   "bugs": {
     "url": "https://github.com/EnachescuAlin/nodejs-slack-clone/issues"
   },
-  "homepage": "https://github.com/EnachescuAlin/nodejs-slack-clone#readme",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
+    "bootstrap": "^4.1.3",
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "mongoose": "^5.3.4",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-redux": "^5.1.1",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
+    "react-router-prop-types": "^1.0.4",
+    "react-router-redux": "^5.0.0-alpha.9",
+    "reactstrap": "^6.5.0",
+    "redux": "^4.0.1",
     "socket.io": "^2.1.1",
     "swagger-ui-express": "^4.0.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "rimraf": "^2.6.2"
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "autoprefixer": "^9.3.1",
+    "babel-loader": "^8.0.4",
+    "clean-webpack-plugin": "^1.0.0",
+    "css-loader": "^1.0.1",
+    "cssnano": "^4.1.7",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^2.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.10.0",
+    "npm-run-all": "^4.1.3",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.4.0",
+    "react-hot-loader": "^4.3.12",
+    "rimraf": "^2.6.2",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-middleware": "^3.4.0",
+    "webpack-dev-server": "^3.1.10",
+    "webpack-hot-middleware": "^2.24.3",
+    "webpack-merge": "^4.1.4"
   }
 }
