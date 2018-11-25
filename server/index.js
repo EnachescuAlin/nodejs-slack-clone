@@ -35,7 +35,9 @@ async function init() {
     });
 }
 
-init();
+if (process.env.NODE_ENV != 'test') {
+    init();
+}
 
 const app = express(http);
 
@@ -70,4 +72,5 @@ app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
 
+exports.connectToMongo = init; // for testing
 export default app; // for testing
