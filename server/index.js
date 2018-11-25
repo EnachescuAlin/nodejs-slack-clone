@@ -21,11 +21,11 @@ async function init() {
     await mongoose.set('useFindAndModify', false);
     await mongoose.connect('mongodb://localhost/slack_clone_db', {
         useNewUrlParser: true
-    }, (err) => {
+    }, async (err) => {
         if (err) {
-            console.log('connect to database failed =', err);
+            await console.log('connect to database failed =', err);
         } else {
-            console.log('connected to database successfully');
+            await console.log('connected to database successfully');
         }
     });
 }
@@ -64,3 +64,5 @@ const port = 3000;
 app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
+
+export default app; // for testing
