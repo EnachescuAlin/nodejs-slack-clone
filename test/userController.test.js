@@ -79,7 +79,7 @@ describe('User', () => {
             }
         });
 
-        it('it should register an user with an username that already exists', async () => { 
+        it('it should not register an username that already exists', async () => {
             let res = await chai.request(server).post('/api/users/register').send(users[0].user);
 
             res.should.have.status(422);
@@ -117,7 +117,7 @@ describe('User', () => {
             }
         });
 
-        it('it should login an invalid user', async () => {
+        it('it should not login an invalid user', async () => {
             let user = {
                 username: "qweasdzxc",
                 password: "qweasdzxc"
@@ -153,7 +153,7 @@ describe('User', () => {
             }
         });
 
-        it('it should logout an invalid user', async () => {
+        it('it should not logout an invalid user', async () => {
             let res = await chai.request(server).post('/api/users/logout').send();
 
             res.should.have.status(401);
