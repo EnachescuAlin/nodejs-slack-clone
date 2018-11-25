@@ -17,7 +17,7 @@ class UserService {
             'username': user.username
         });
         if (existingUser) {
-            throw new ProcessEntityError(`Username ${username} already exists`);
+            throw new ProcessEntityError(`Username ${user.username} already exists`);
         }
 
         const newUser = new User();
