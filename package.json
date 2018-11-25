@@ -10,7 +10,7 @@
     "start:server:dev": "set NODE_ENV=development&& npm run build:server && node dist/server/index.js",
     "start:server": "set NODE_ENV=production&& npm run build:server && node dist/server/index.js",
     "start": "npm-run-all --parallel start:server build:client",
-    "test": "set NODE_ENV=test && npm run build:server && npm run build:test && nyc mocha dist/test --exit",
+    "test": "export NODE_ENV=test && npm run build:server && npm run build:test && nyc mocha dist/test --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
