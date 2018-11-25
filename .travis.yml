@@ -1,6 +1,9 @@
 language: node_js
 sudo: false
 
+services:
+  - mongodb
+
 node_js:
   - 10
 
