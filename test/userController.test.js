@@ -163,4 +163,142 @@ describe('User', () => {
             res.body.error.should.be.eql('Invalid Token');
         });
     });
+
+    describe('getAll', () => {
+        it('it should get all users', async () => {
+            const user = {
+                username: users[0].user.username,
+                password: users[0].user.password
+            };
+            const loggedUser = await chai.request(server).post('/api/users/login').send(user);
+
+            const res = await chai.request(server).get('/api/users/')
+                .auth(loggedUser.body.token, { type: 'bearer' });
+
+            res.should.have.status(200);
+            res.body.should.be.a('array');
+
+            for (let i = 0; i < users.length; i++) {
+                let online = false;
+                if (i === 0) {
+                    online = true;
+                }
+                const resUser = res.body[i];
+
+                resUser.should.be.a('object');
+
+                resUser.should.not.have.property('error');
+
+                resUser.should.have.property('id');
+                resUser.should.have.property('username');
+                resUser.should.have.property('firstname');
+                resUser.should.have.property('lastname');
+                resUser.should.have.property('registerDate');
+                resUser.should.have.property('email');
+                resUser.should.have.property('channels');
+                resUser.should.have.property('online');
+                resUser.should.have.property('directMessages');
+
+                resUser.username.should.be.eql(users[i].user.username);
+                resUser.firstname.should.be.eql(users[i].user.firstName);
+                resUser.lastname.should.be.eql(users[i].user.lastName);
+                resUser.email.should.be.eql(users[i].user.email);
+                resUser.online.should.be.eql(online);
+                resUser.channels.should.be.eql([]);
+                resUser.directMessages.should.be.eql([]);
+            }
+
+            await chai.request(server).post('/api/users/logout')
+                    .auth(loggedUser.body.token, { type: 'bearer' }).send();
+        });
+
+        it('it should not get all users without auth', async () => {
+            let res = await chai.request(server).get('/api/users/');
+
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+
+            res.body.should.have.property('error');
+            res.body.error.should.be.eql('Invalid Token');
+        });
+    });
+
+    describe('getByUsername', () => {
+        it('it should get an user by username', async () => {
+            const user = {
+                username: users[0].user.username,
+                password: users[0].user.password
+            };
+            const loggedUser = await chai.request(server).post('/api/users/login').send(user);
+
+            for (let i = 0; i < users.length; i++) {
+                let online = false;
+                if (i === 0) {
+                    online = true;
+                }
+
+                const res = await chai.request(server).get('/api/users/')
+                    .auth(loggedUser.body.token, { type: 'bearer' })
+                    .query({ 'username': users[i].user.username });
+
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+
+                res.body.should.not.have.property('error');
+
+                res.body.should.have.property('id');
+                res.body.should.have.property('username');
+                res.body.should.have.property('firstname');
+                res.body.should.have.property('lastname');
+                res.body.should.have.property('registerDate');
+                res.body.should.have.property('email');
+                res.body.should.have.property('channels');
+                res.body.should.have.property('online');
+                res.body.should.have.property('directMessages');
+
+                res.body.username.should.be.eql(users[i].user.username);
+                res.body.firstname.should.be.eql(users[i].user.firstName);
+                res.body.lastname.should.be.eql(users[i].user.lastName);
+                res.body.email.should.be.eql(users[i].user.email);
+                res.body.online.should.be.eql(online);
+                res.body.channels.should.be.eql([]);
+                res.body.directMessages.should.be.eql([]);
+            }
+
+            await chai.request(server).post('/api/users/logout')
+                .auth(loggedUser.body.token, { type: 'bearer' }).send();
+        });
+
+        it('it should not get an user by username without auth', async () => {
+            let res = await chai.request(server).get('/api/users/')
+                .query({ 'username': users[0].user.username });
+
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+
+            res.body.should.have.property('error');
+            res.body.error.should.be.eql('Invalid Token');
+        });
+
+        it('it should not get a non-existent user by username', async () => {
+            const user = {
+                username: users[0].user.username,
+                password: users[0].user.password
+            };
+            const loggedUser = await chai.request(server).post('/api/users/login').send(user);
+
+            const res = await chai.request(server).get('/api/users/')
+                .auth(loggedUser.body.token, { type: 'bearer' })
+                .query({ 'username': 'qweasdzxc' });
+
+            res.should.have.status(404);
+            res.body.should.be.a('object');
+    
+            res.body.should.have.property('error');
+            res.body.error.should.be.eql('User with username qweasdzxc was not found');
+
+            await chai.request(server).post('/api/users/logout')
+                .auth(loggedUser.body.token, { type: 'bearer' }).send();
+        });
+    });
 });
