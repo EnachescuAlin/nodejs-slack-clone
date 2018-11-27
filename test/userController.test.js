@@ -5,6 +5,7 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 
 const should = chai.should();
+const expect = chai.expect;
 
 chai.use(chaiHttp);
 
@@ -42,7 +43,7 @@ const users = [
 ];
 
 describe('User', () => {
-    before(async () => {
+    after(async () => {
         await User.deleteMany({});
     });
 
@@ -472,6 +473,7 @@ describe('User', () => {
                 .auth(loggedUser.body.token, { type: 'bearer' }).send(newUser);
 
             res.should.have.status(204);
+            res.body.should.be.empty;
 
             await chai.request(server).post('/api/users/logout')
                 .auth(loggedUser.body.token, { type: 'bearer' }).send();
@@ -565,6 +567,56 @@ describe('User', () => {
 
             res.should.have.status(401);
             res.body.should.be.a('object');
+            res.body.should.be.empty;
+
+            await chai.request(server).post('/api/users/logout')
+                .auth(loggedUser.body.token, { type: 'bearer' }).send();
+        });
+    });
+
+    describe('remove', () => {
+        it('it should remove an user', async () => {
+            const user = {
+                username: users[0].user.username,
+                password: users[0].user.password
+            };
+            const loggedUser = await chai.request(server).post('/api/users/login').send(user);
+            const infoUser = await chai.request(server).get('/api/users/')
+                .auth(loggedUser.body.token, { type: 'bearer' })
+                .query({ 'username': user.username });
+
+            let res = await chai.request(server).delete(`/api/users/${infoUser.body.id}`)
+                .auth(loggedUser.body.token, { type: 'bearer' });
+
+            res.should.have.status(204);
+
+            const mongoUser = await User.findOne({ username: user.username });
+            expect(mongoUser).to.be.null;
+        });
+
+        it('it should not remove an user without auth', async () => {
+            let res = await chai.request(server).delete('/api/users/123');
+
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+
+            res.body.should.have.property('error');
+            res.body.error.should.be.eql('Invalid Token');
+        });
+
+        it('it should not remove other user', async () => {
+            const user = {
+                username: users[1].user.username,
+                password: users[1].user.password
+            };
+            const loggedUser = await chai.request(server).post('/api/users/login').send(user);
+
+            let res = await chai.request(server).delete('/api/users/123')
+                .auth(loggedUser.body.token, { type: 'bearer' });
+
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+            res.body.should.be.empty;
 
             await chai.request(server).post('/api/users/logout')
                 .auth(loggedUser.body.token, { type: 'bearer' }).send();
