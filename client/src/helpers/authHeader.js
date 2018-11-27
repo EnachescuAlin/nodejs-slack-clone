@@ -1,7 +1,7 @@
 import { TOKEN_KEY } from '../constants';
 
 export default function authHeader() {
-    let token = JSON.parse(localStorage.getItem(TOKEN_KEY));
+    let token = localStorage.getItem(TOKEN_KEY);
 
     if (token) {
         return { 'Authorization': 'Bearer ' + token };

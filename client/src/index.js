@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/logo-small.png';
 
 ReactDOM.render(
     <Provider store={store}>
