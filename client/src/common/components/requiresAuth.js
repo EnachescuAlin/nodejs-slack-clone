@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
 export default function (WrappedComponent) {
@@ -14,7 +13,7 @@ export default function (WrappedComponent) {
             );
         }
 
-        componentDidMount() {
+        componentWillMount() {
             this.checkAndRedirect();
         }
 

@@ -13,7 +13,8 @@ class RegisterForm extends Component {
             registerForm: {
                 errors: {
                     username: [
-                        () => Validators.required(this.state.registerForm.fields.username.value, 'Username field is required') 
+                        () => Validators.required(this.state.registerForm.fields.username.value, 'Username field is required'),
+                        () => Validators.serverError(this.props.serverValidationErrors.username, this.state.registerForm.fields.username.changed) 
                     ],
                     password: [
                         () => Validators.required(this.state.registerForm.fields.password.value, 'Password field is required')
@@ -34,27 +35,33 @@ class RegisterForm extends Component {
                 fields: {
                     username: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     },
                     password: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     },
                     confirmPassword: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     },
                     email: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     },
                     firstName: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     },
                     lastName: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     }
                 },
                 isValid: () => Object.keys(this.state.registerForm.errors)
@@ -65,8 +72,8 @@ class RegisterForm extends Component {
     }
 
     handleInputChange = (event) => {
-        let name = event.target.name;
-        let value = event.target.value;
+        var name = event.target.name;
+        var value = event.target.value;
         this.setState({ 
             registerForm: { 
                 ...this.state.registerForm, 
@@ -74,7 +81,8 @@ class RegisterForm extends Component {
                     ...this.state.registerForm.fields, 
                     [name]: {
                         value, 
-                        touched: true 
+                        touched: true,
+                        changed: true 
                     } 
                 } 
             } 
@@ -82,14 +90,19 @@ class RegisterForm extends Component {
     }
 
     handleSubmit = (event) => {
-        let user = {
+        var user = {
             username: this.state.registerForm.fields.username.value,
             password: this.state.registerForm.fields.password.value,
             firstName: this.state.registerForm.fields.firstName.value,
             lastName: this.state.registerForm.fields.lastName.value,
             email: this.state.registerForm.fields.email.value
         };
-        this.props.onSubmit(user);
+        this.props.onSubmit(user)
+            .then(() => {
+                var state = Object.assign({}, this.state);
+                Object.keys(state.registerForm.fields).forEach(key => { state.registerForm.fields[key].changed = false });
+                this.setState(state);
+            });
         event.preventDefault();
     } 
 
@@ -162,7 +175,8 @@ class RegisterForm extends Component {
 }
 
 RegisterForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired,
+    serverValidationErrors: PropTypes.object
 }
 
 export default withRouter(RegisterForm);

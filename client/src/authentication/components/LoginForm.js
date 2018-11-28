@@ -13,32 +13,36 @@ class LoginForm extends Component {
             loginForm: {
                 errors: {
                     username: [
-                        () => Validators.required(this.state.loginForm.fields.username.value, 'Username field is required')
+                        () => Validators.required(this.state.loginForm.fields.username.value, 'Username field is required'),
+                        () => Validators.serverError(this.props.serverValidationErrors.username, this.state.loginForm.fields.username.changed)
                     ],
                     password: [
-                        () => Validators.required(this.state.loginForm.fields.password.value, 'Password field is required')
+                        () => Validators.required(this.state.loginForm.fields.password.value, 'Password field is required'),
+                        () => Validators.serverError(this.props.serverValidationErrors.password, this.state.loginForm.fields.password.changed)
                     ]
                 },
                 fields: {
                     username: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     },
                     password: { 
                         value: '',
-                        touched: false
+                        touched: false,
+                        changed: false
                     }
                 },
                 isValid: () => Object.keys(this.state.loginForm.errors)
                                 .map(key => this.state.loginForm.errors[key].filter(x => typeof x() == 'string').length == 0)
-                                .reduce((prev, curr) => prev && curr, true) 
+                                .reduce((prev, current) => prev && current, true) 
             }
         }
     }
 
     handleInputChange = (event) => {
-        let name = event.target.name;
-        let value = event.target.value;
+        var name = event.target.name;
+        var value = event.target.value;
         this.setState({ 
             loginForm: { 
                 ...this.state.loginForm, 
@@ -46,7 +50,8 @@ class LoginForm extends Component {
                     ...this.state.loginForm.fields, 
                     [name]: {
                         value, 
-                        touched: true 
+                        touched: true,
+                        changed: true 
                     } 
                 } 
             } 
@@ -54,9 +59,14 @@ class LoginForm extends Component {
     }
 
     handleSubmit = (event) => {
-        let username = this.state.loginForm.fields.username.value;
-        let password = this.state.loginForm.fields.password.value;
-        this.props.onSubmit(username, password);
+        var username = this.state.loginForm.fields.username.value;
+        var password = this.state.loginForm.fields.password.value;
+        this.props.onSubmit(username, password)
+            .then(() => {
+                var state = Object.assign({}, this.state);
+                Object.keys(state.loginForm.fields).forEach(key => { state.loginForm.fields[key].changed = false });
+                this.setState(state);
+            });
         event.preventDefault();
     }
 
@@ -97,7 +107,8 @@ class LoginForm extends Component {
 }
 
 LoginForm.propTypes = {
-    onSubmit: PropTypes.func.isRequired
+    onSubmit: PropTypes.func.isRequired,
+    serverValidationErrors: PropTypes.object
 }
 
 export default withRouter(LoginForm);

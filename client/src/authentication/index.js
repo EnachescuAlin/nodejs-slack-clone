@@ -24,27 +24,27 @@ function login(username, password) {
     const failure = (error) => { return { type: authActionTypes.LOGIN_ERROR, error }; };
     const requestStarted = () => { return { type: authActionTypes.LOGIN_REQUEST }; };
 
-    return dispatch => {
+    return async dispatch => {
         dispatch(requestStarted());
-        userService.login({ username, password })
-            .then(response => {
-                dispatch(success(response.data));
-            })
-            .catch(error => {
-                dispatch(failure(error));
-            })
+        try {
+            const response = await userService.login({ username, password });
+            dispatch(success(response.data));
+        }
+        catch (error) {
+            dispatch(failure(error.response.data));
+        }
     };
 }
 
 function logout() {
-    return dispatch => {
-        userService.logoff()
-            .then(() => {
-                dispatch({ type: authActionTypes.LOGOUT });
-            })
-            .catch(() => {
-                dispatch({ type: authActionTypes.LOGOUT });
-            });
+    return async dispatch => {
+        try {
+            await userService.logoff();
+            dispatch({ type: authActionTypes.LOGOUT });
+        }
+        catch (e) {
+            dispatch({ type: authActionTypes.LOGOUT });
+        }
     }
 }
 
@@ -53,15 +53,15 @@ function register(user) {
     const failure = (error) => { return { type: authActionTypes.REGISTRATION_ERROR, error }; };
     const requestStarted = () => { return { type: authActionTypes.REGISTRATION_REQUEST }; };
 
-    return dispatch => {
+    return async dispatch => {
         dispatch(requestStarted());
-        userService.register(user)
-            .then(response => {
-                dispatch(success(response.data));
-            })
-            .catch(error => {
-                dispatch(failure(error));
-            });
+        try {
+            const response = await userService.register(user);
+            dispatch(success(response.data));
+        }
+        catch (error) {
+            dispatch(failure(error.response.data));
+        }
     }
 }
 
@@ -73,14 +73,22 @@ export default function authentication(state = initialState, action) {
     switch (action.type) {
         case authActionTypes.LOGIN_SUCCESS:
             localStorage.setItem(TOKEN_KEY, action.token.token);
-            return Object.assign(state, action.token);
+            var newState = Object.assign({}, state, action.token);
+            delete newState.error;
+            return newState;
         case authActionTypes.REGISTRATION_SUCCESS:
-            return Object.assign(state, { user: action.user });
+            var newState = Object.assign({}, state, { user: action.user });
+            delete newState.error;
+            return newState;
         case authActionTypes.LOGOUT:
+        case authActionTypes.LOGIN_REQUEST:
             var newState = Object.assign({}, state);
             delete newState.token;
             localStorage.removeItem(TOKEN_KEY);
             return newState;
+        case authActionTypes.LOGIN_ERROR: 
+        case authActionTypes.REGISTRATION_ERROR:
+            return Object.assign({}, state, action.error);
         default:
             return state;
     }
