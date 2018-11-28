@@ -7,7 +7,7 @@ const extractPlugin = new ExtractTextPlugin({
 
 module.exports = {
   entry: {
-    main: "./index.js"
+    main: [ './index.js', './styles.scss' ]
   },
   output: {
     filename: 'js/[name].js',
@@ -35,7 +35,7 @@ module.exports = {
         }
       }]
     }, {
-      test: /\.css$/,
+      test: /\.(css|scss)$/,
       use: extractPlugin.extract({
         use: ["css-loader", "sass-loader", "postcss-loader"],
         fallback: 'style-loader'

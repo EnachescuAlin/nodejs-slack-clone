@@ -12,11 +12,10 @@ module.exports = merge(common, {
     ],
     context: path.resolve(__dirname, '../../client/src'),
     output: {
-        path: path.resolve(__dirname, '../client/assets'),
+        path: path.resolve(__dirname, '../client/public'),
     },
     entry: {
         main: [
-            './index.js',
             'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true'
         ]
     }
