@@ -121,7 +121,7 @@ export default class ChannelService {
             throw new NotFoundError(`User with id = ${userId} was not found`);
         }
 
-        const member = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(memberId) : null;
+        const member = mongoose.Types.ObjectId.isValid(memberId) ? await User.findById(memberId) : null;
         if (!member) {
             throw new NotFoundError(`Member with id = ${memberId} was not found`);
         }
@@ -138,7 +138,7 @@ export default class ChannelService {
             throw new ProcessEntityError('You cannot kickout the owner of the channel');
         }
 
-        if (!channel.createdBy.equals(userId)) {
+        if (!channel.createdBy.equals(userId) && !(userId === memberId)) {
             throw new ForbiddenError('You have no permission to kickout members');
         }
 
