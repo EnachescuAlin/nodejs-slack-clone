@@ -93,23 +93,23 @@ class MessageService {
     }
 
     async getAll(limit, offset) {
-        var query = await Message.find().sort('-addDate');
+        var query = Message.find().sort('-addDate');
         if (limit)
-            query = await query.skip(offset).limit(limit);
+            query = query.skip(offset).limit(limit);
 
-        return await query.map(message => message.toDto());
+        return (await query).map(message => message.toDto());
     }
 
     async getByChannel(channelId, limit, offset) {
         if (! await mongoose.Types.ObjectId.isValid(channelId))
             throw new NotFoundError(`Channel with id = ${channelId} was not found`);
 
-        var query = await Message.find({ 'receiver.channelId': channelId }).sort('-addDate');
+        var query = Message.find({ 'receiver.channelId': channelId }).sort('-addDate');
 
         if (limit)
-            query = await query.skip(offset).limit(limit);
+            query = query.skip(offset).limit(limit);
 
-        return await query.map(message => message.toDto());
+        return (await query).map(message => message.toDto());
     }
 
     async getBySenderAndReceiver(senderId, receiverId, limit, offset) {
@@ -118,7 +118,7 @@ class MessageService {
         if (! await mongoose.Types.ObjectId.isValid(receiverId))
             throw new NotFoundError(`Cannot find the receiver with id = ${receiverId}`);
 
-        var query = await Message.find({
+        var query = Message.find({
             $or: [
                 {
                     'receiver.userId': receiverId,
@@ -132,9 +132,9 @@ class MessageService {
         }).sort('-addDate');
 
         if (limit)
-            query = await query.skip(offset).limit(limit);
+            query = query.skip(offset).limit(limit);
 
-        return await query.map(message => message.toDto());
+        return (await query).map(message => message.toDto());
     }
 }
 
