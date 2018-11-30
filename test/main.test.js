@@ -9,6 +9,7 @@ describe('Test controllers', () => {
 
     require('./userController.test');
     require('./channelController.test');
+    require('./messageController.test');
 
     after(async () => {
         await mongoose.connection.db.dropDatabase();
