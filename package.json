@@ -6,9 +6,12 @@
   "scripts": {
     "build:server": "rimraf dist/server && babel ./server --out-dir dist/server --copy-files",
     "build:client": "rimraf dist/client && webpack --config ./server/webpack.prod.js",
+    "build:test": "rimraf dist/test && babel ./test --out-dir dist/test --copy-files",
     "start:server:dev": "set NODE_ENV=development&& npm run build:server && node dist/server/index.js",
     "start:server": "set NODE_ENV=production&& npm run build:server && node dist/server/index.js",
-    "start": "npm-run-all --parallel start:server build:client"
+    "start": "npm-run-all --parallel start:server build:client",
+    "test": "export NODE_ENV=test && npm run build:server && npm run build:test && nyc mocha dist/test/main.test.js --timeout 10000 --exit",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
     "type": "git",
@@ -25,9 +28,14 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "bootstrap": "^4.1.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "coveralls": "^3.0.2",
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
+    "mocha": "^5.2.0",
     "mongoose": "^5.3.4",
+    "nyc": "^13.1.0",
     "prop-types": "^15.6.2",
     "react": "^16.6.3",
     "react-custom-scrollbars": "^4.2.1",
@@ -61,7 +69,7 @@
     "file-loader": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
     "node-sass": "^4.10.0",
-    "npm-run-all": "^4.1.3",
+    "npm-run-all": "^4.1.5",
     "postcss-import": "^12.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.4.0",

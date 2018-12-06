@@ -62,7 +62,8 @@ userSchema.methods.toDto = function() {
       email: this.email,
       channels: this.channels,
       online: this.online,
-      directMessages: this.directMessages
+      directMessages: this.directMessages,
+      status: this.status
     };
 };
 

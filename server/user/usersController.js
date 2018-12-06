@@ -79,8 +79,8 @@ function update(req, res, next) {
     else {
         var user = {
             username: req.body.username,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
+            firstname: req.body.firstName,
+            lastname: req.body.lastName,
             password: req.body.password,
             email: req.body.email,
             status: req.body.status
