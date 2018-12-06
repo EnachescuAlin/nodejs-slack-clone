@@ -7,7 +7,6 @@ import { Switch, Route } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import requiresAuth from './common/components/requiresAuth';
-import Test from './common/components/Test';
 import Home from './home/containers/Home';
 
 class App extends Component {
@@ -21,7 +20,6 @@ class App extends Component {
           <Switch location={this.props.location}>
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
-            <Route path="/test" component={requiresAuth(Test)}/>
             <Route path="/" component={requiresAuth(Home)}/>
           </Switch>
         </CSSTransition>

@@ -9,7 +9,7 @@ class PageContent extends Component {
             <div className={`page-content ${this.props.fullPage ? 'full-page' : ''}`}>
                 <Navbar color="dark" dark>
                     <NavbarToggler onClick={this.props.onToggleClick} />
-                    <Account />
+                    <Account onLogoutClick={this.props.onLogoutClick} user={this.props.user} />
                 </Navbar>
                 {this.props.children}
             </div>
@@ -20,7 +20,9 @@ class PageContent extends Component {
 PageContent.propTypes = {
     children: PropTypes.any,
     onToggleClick: PropTypes.func.isRequired,
-    fullPage: PropTypes.bool.isRequired
+    fullPage: PropTypes.bool.isRequired,
+    user: PropTypes.object,
+    onLogoutClick: PropTypes.func.isRequired
 };
 
 export default PageContent;
