@@ -70,7 +70,7 @@ class UserService {
     }
 
     async getById(userId) {
-        const user = mongoose.Types.ObjectId.isValid(userId) ? 
+        const user = await mongoose.Types.ObjectId.isValid(userId) ? 
             await User.findOne({
                 '_id': userId
             }) : null;
@@ -91,7 +91,7 @@ class UserService {
     }
 
     async update(id, user) {
-        const existingUser = mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
+        const existingUser = await mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
         if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);
         if (existingUser.username !== user.username && await User.findOne({
                 username: user.username
@@ -107,7 +107,7 @@ class UserService {
     }
 
     async remove(id) {
-        const existingUser = mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
+        const existingUser = await mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
         if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);
         await existingUser.remove();
     }

@@ -40,7 +40,7 @@ export default class ChannelService {
     }
 
     async getChannelById(channelId, userId) {
-        const channel = mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findOne({
+        const channel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findOne({
             '_id': channelId
         }) : null;
         if (!channel) {
@@ -53,7 +53,7 @@ export default class ChannelService {
     }
 
     async join(channelId, userId) {
-        const channel = mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
+        const channel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
         if (!channel) {
             throw new NotFoundError(`Channel with id = ${channelId} was not found`);
         }
@@ -61,7 +61,7 @@ export default class ChannelService {
             throw new ForbiddenError('Not allowed to join this channel');
         }
 
-        const user = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : null;
+        const user = await mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : null;
         if (!user) {
             throw new NotFoundError(`User with id = ${userId} was not found`);
         }
@@ -81,17 +81,17 @@ export default class ChannelService {
             throw new ProcessEntityError('You cannot invite yourself');
         }
 
-        const channel = mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
+        const channel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
         if (!channel) {
             throw new NotFoundError(`Channel with id = ${channelId} was not found`);
         }
 
-        const user = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : null;
+        const user = await mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : null;
         if (!user) {
             throw new NotFoundError(`User with id = ${userId} was not found`);
         }
 
-        const guest = mongoose.Types.ObjectId.isValid(guestId) ? await User.findById(guestId) : null;
+        const guest = await mongoose.Types.ObjectId.isValid(guestId) ? await User.findById(guestId) : null;
         if (!guest) {
             throw new NotFoundError(`Guest with id = ${guestId} was not found`);
         }
@@ -111,17 +111,17 @@ export default class ChannelService {
     }
 
     async kickout(channelId, userId, memberId) {
-        const channel = mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
+        const channel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
         if (!channel) {
             throw new NotFoundError(`Channel with id = ${channelId} was not found`);
         }
 
-        const user = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : null;
+        const user = await mongoose.Types.ObjectId.isValid(userId) ? await User.findById(userId) : null;
         if (!user) {
             throw new NotFoundError(`User with id = ${userId} was not found`);
         }
 
-        const member = mongoose.Types.ObjectId.isValid(userId) ? await User.findById(memberId) : null;
+        const member = await mongoose.Types.ObjectId.isValid(memberId) ? await User.findById(memberId) : null;
         if (!member) {
             throw new NotFoundError(`Member with id = ${memberId} was not found`);
         }
@@ -138,7 +138,7 @@ export default class ChannelService {
             throw new ProcessEntityError('You cannot kickout the owner of the channel');
         }
 
-        if (!channel.createdBy.equals(userId)) {
+        if (!channel.createdBy.equals(userId) && !(userId === memberId)) {
             throw new ForbiddenError('You have no permission to kickout members');
         }
 
@@ -150,7 +150,7 @@ export default class ChannelService {
     }
 
     async update(channelId, channel, userId) {
-        const existingChannel = mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
+        const existingChannel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
         if (!existingChannel) throw new NotFoundError(`Channel with id = ${channelId} was not found`);
         if (!existingChannel.createdBy.equals(userId)) {
             throw new ForbiddenError('You cannot update channel');

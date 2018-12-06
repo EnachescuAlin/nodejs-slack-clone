@@ -16,21 +16,28 @@ import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json';
 
+let mongodb_url;
+if (process.env.NODE_ENV === 'test') {
+    mongodb_url = 'mongodb://localhost/slack_clone_db_test';
+} else {
+    mongodb_url = 'mongodb://localhost/slack_clone_db';
+}
+
 async function init() {
     await mongoose.set('useCreateIndex', true)
     await mongoose.set('useFindAndModify', false);
-    await mongoose.connect('mongodb://localhost/slack_clone_db', {
-        useNewUrlParser: true
-    }, (err) => {
+    await mongoose.connect(mongodb_url, { useNewUrlParser: true }, async (err) => {
         if (err) {
-            console.log('connect to database failed =', err);
+            await console.log('connect to database failed =', err);
         } else {
-            console.log('connected to database successfully');
+            await console.log('connected to database successfully');
         }
     });
 }
 
-init();
+if (process.env.NODE_ENV != 'test') {
+    init();
+}
 
 const app = express(http);
 
@@ -64,3 +71,6 @@ const port = 3000;
 app.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
+
+exports.connectToMongo = init; // for testing
+export default app; // for testing
