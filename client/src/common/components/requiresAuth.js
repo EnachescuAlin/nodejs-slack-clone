@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
-export default function (WrappedComponent) {
+export default (WrappedComponent) => {
     class Authenticate extends Component {
         render() {
             return ( 
