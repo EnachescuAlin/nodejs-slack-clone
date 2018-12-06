@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { actions } from '../index';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { TOKEN_KEY } from '../../constants';
 
 class Login extends Component {
     render() {
@@ -27,7 +28,7 @@ class Login extends Component {
     onLoginFormSubmit = async (username, password) => {
         await this.props.actions.login(username, password);
         if (!this.props.error) 
-            this.props.history.push("/");
+            this.props.history.push('/');
     }
 }
 

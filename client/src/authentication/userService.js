@@ -2,8 +2,6 @@ import axios from 'axios';
 import authHeader from '../helpers/authHeader';
 import { TOKEN_KEY } from '../constants';
 
-const config = { headers: authHeader() };
-
 export default class UserService {
     login = (loginDetails) => 
         axios.post('/api/users/login', loginDetails);
@@ -12,10 +10,13 @@ export default class UserService {
         axios.post('/api/users/register', userDetails);
 
     logoff = () => {
+        const config = { headers: authHeader() };
         localStorage.removeItem(TOKEN_KEY);
         return axios.post('/api/users/logout', null, config);
     }
 
-    getCurrentUser = () => 
-        axios.get('/api/users/authenticated/current', config);
+    getCurrentUser = () => { 
+        const config = { headers: authHeader() };
+        return axios.get('/api/users/authenticated/current', config);
+    }
 }
