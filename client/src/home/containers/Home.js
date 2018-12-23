@@ -13,6 +13,7 @@ import ReactRouterPropTypes from 'react-router-prop-types';
 import { Switch, Route } from 'react-router-dom';
 import EditProfile from '../../profile/containers/EditProfile';
 import requiresAuth from '../../common/components/requiresAuth';
+import SubMenu from '../../common/components/SubMenu';
 
 class Home extends Component {
     constructor() {
@@ -62,7 +63,10 @@ class Home extends Component {
                                 <ListGroup className="menu">
                                     <ListGroupItem tag="a" href="/" className="menu-item">Home</ListGroupItem>
                                     <ListGroupItem tag="a" href="/" className="menu-item">About</ListGroupItem>
-                                    <ListGroupItem tag="a" href="/" className="menu-item">Credits</ListGroupItem>
+                                    <ListGroupItem tag={SubMenu} subMenuTitle="Credits">
+                                        <ListGroupItem tag="a" href="/" className="menu-item">Home</ListGroupItem>
+                                        <ListGroupItem tag="a" href="/" className="menu-item">About</ListGroupItem>
+                                    </ListGroupItem>
                                 </ListGroup>
                             </Scrollbars>
                         </Sidebar>
