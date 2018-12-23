@@ -71,15 +71,25 @@ $break-xlarge: 1200px;
     background: inherit!important;
     border: none;
 
-    & > .menu-item {
+    & .menu-item {
         background: inherit;
         border: none;
         padding: 0.7em 1.3em;
         color: inherit;
+        cursor: pointer;
 
         &:hover {
             background: #046bda;
         }
+    }
+}
+
+.sub-menu .menu-item {
+    background: #0265ce;
+    padding-left: 2em;
+    
+    &:hover {
+        background: #034fa1;
     }
 }
 
@@ -125,7 +135,7 @@ $break-xlarge: 1200px;
 }
 
 .navbar {
-    position: fixed;
+    position: fixed!important;
     width: inherit!important;
     top: 0;
 }

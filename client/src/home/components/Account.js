@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 class Account extends Component {
@@ -24,9 +25,9 @@ class Account extends Component {
                 </DropdownToggle>
                 <DropdownMenu>
                     <DropdownItem header>{this.props.user.username}</DropdownItem>
-                    <DropdownItem header>{`Hello ${this.props.user.firstname}, ${this.props.user.lastname}`}</DropdownItem>
                     <DropdownItem divider />
-                    <DropdownItem onClick={this.props.onLogoutClick}>Logout</DropdownItem>
+                    <DropdownItem tag={Link} style={{ textDecoration: 'none' }} to="/edit-profile">Edit Profile</DropdownItem>
+                    <DropdownItem className="btn" onClick={this.props.onLogoutClick}>Logout</DropdownItem>
                 </DropdownMenu>
             </Dropdown>
         );

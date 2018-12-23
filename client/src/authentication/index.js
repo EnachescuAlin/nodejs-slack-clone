@@ -11,7 +11,10 @@ export const authActionTypes = {
     REGISTRATION_REQUEST: 'talkpeach/authentication/REGISTRATION_REQUEST',
     REGISTRATION_SUCCESS: 'talkpeach/authentication/REGISTRATION_SUCCESS',
     REGISTRATION_ERROR: 'talkpeach/authentication/REGISTRATION_ERROR',
-    GET_CURRENT_USER: 'talkpeach/authentication/GET_CURRENT_USER'
+    GET_CURRENT_USER: 'talkpeach/authentication/GET_CURRENT_USER',
+    UPDATE_PROFILE_REQUEST: 'talkpeach/authentication/UPDATE_PROFILE_REQUEST',
+    UPDATE_PROFILE_SUCCESS: 'talkpeach/authentication/UPDATE_PROFILE_SUCCESS',
+    UPDATE_PROFILE_ERROR: 'talkpeach/authentication/UPDATE_PROFILE_ERROR'
 }
 
 const userService = new UserService();
@@ -20,7 +23,8 @@ export const actions = {
     login,
     logout,
     register,
-    getCurrentUser
+    getCurrentUser,
+    updateProfile
 };
 
 function login(username, password) {
@@ -63,7 +67,7 @@ function logout() {
             dispatch({
                 type: authActionTypes.LOGOUT
             });
-        } catch (e) {
+        } catch (error) {
             dispatch({
                 type: authActionTypes.LOGOUT
             });
@@ -117,6 +121,39 @@ function getCurrentUser() {
     }
 }
 
+function updateProfile(userId, user) {
+    const success = (user) => {
+        return {
+            type: authActionTypes.UPDATE_PROFILE_SUCCESS,
+            user
+        };
+    };
+    const failure = (error) => {
+        return {
+            type: authActionTypes.UPDATE_PROFILE_ERROR,
+            error
+        };
+    };
+    const requestStarted = () => {
+        return {
+            type: authActionTypes.UPDATE_PROFILE_REQUEST
+        };
+    };
+
+    return async dispatch => {
+        try {
+            dispatch(requestStarted());
+            const response = await userService.update(userId, user);
+            if (response.status === 204)
+                dispatch(success(user));
+            else
+                dispatch(failure(response.data || 'Unknown error!'));
+        } catch (error) {
+            dispatch(failure(error));
+        }
+    }
+}
+
 const initialState = {
     token: localStorage.getItem(TOKEN_KEY)
 }
@@ -145,6 +182,12 @@ export default function authentication(state = initialState, action) {
             return Object.assign({}, state, action.error);
         case authActionTypes.GET_CURRENT_USER:
             return Object.assign({}, state, { user: action.user });
+        case authActionTypes.UPDATE_PROFILE_ERROR:
+            return Object.assign({}, state, action.error);
+        case authActionTypes.UPDATE_PROFILE_SUCCESS:
+            const newState = Object.assign({}, state, { user: { ...action.user, ...state.user } });
+            delete newState.error;
+            return newState;
         default:
             return state;
     }

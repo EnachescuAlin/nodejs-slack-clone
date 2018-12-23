@@ -10,6 +10,10 @@ import PageContent from '../components/PageContent';
 import { bindActionCreators } from 'redux';
 import Spinner from '../../common/components/Spinner';
 import ReactRouterPropTypes from 'react-router-prop-types';
+import { Switch, Route } from 'react-router-dom';
+import EditProfile from '../../profile/containers/EditProfile';
+import requiresAuth from '../../common/components/requiresAuth';
+import SubMenu from '../../common/components/SubMenu';
 
 class Home extends Component {
     constructor() {
@@ -59,11 +63,18 @@ class Home extends Component {
                                 <ListGroup className="menu">
                                     <ListGroupItem tag="a" href="/" className="menu-item">Home</ListGroupItem>
                                     <ListGroupItem tag="a" href="/" className="menu-item">About</ListGroupItem>
-                                    <ListGroupItem tag="a" href="/" className="menu-item">Credits</ListGroupItem>
+                                    <ListGroupItem tag={SubMenu} subMenuTitle="Credits">
+                                        <ListGroupItem tag="a" href="/" className="menu-item">Home</ListGroupItem>
+                                        <ListGroupItem tag="a" href="/" className="menu-item">About</ListGroupItem>
+                                    </ListGroupItem>
                                 </ListGroup>
                             </Scrollbars>
                         </Sidebar>
-                        <PageContent user={this.props.user} onLogoutClick={this.logout} onToggleClick={this.toggleSidebar} fullPage={!this.state.openSidebar} />
+                        <PageContent user={this.props.user} onLogoutClick={this.logout} onToggleClick={this.toggleSidebar} fullPage={!this.state.openSidebar}>
+                            <Switch>
+                                <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
+                            </Switch>
+                        </PageContent>
                     </React.Fragment> 
                 : 
                     <Spinner />
