@@ -7,6 +7,7 @@ const compiler = webpack(config);
 
 
 function addWebpackHotMiddleware(app) {
+    console.log('Starting building webpack bundles');
     app.use(webpackDevMiddleware(compiler, {
         noInfo: true,
         publicPath: config.output.publicPath

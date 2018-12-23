@@ -19,4 +19,9 @@ export default class UserService {
         const config = { headers: authHeader() };
         return axios.get('/api/users/authenticated/current', config);
     }
+
+    update = (userId, details) => {
+        const config = { headers: authHeader() };
+        return axios.put(`/api/users/${userId}`, details, config);
+    }
 }

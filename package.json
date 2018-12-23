@@ -7,10 +7,10 @@
     "build:server": "rimraf dist/server && babel ./server --out-dir dist/server --copy-files",
     "build:client": "rimraf dist/client && webpack --config ./server/webpack.prod.js",
     "build:test": "rimraf dist/test && babel ./test --out-dir dist/test --copy-files",
-    "start:server:dev": "set NODE_ENV=development&& npm run build:server && node dist/server/index.js",
-    "start:server": "set NODE_ENV=production&& npm run build:server && node dist/server/index.js",
+    "start:server:dev": "npm run build:server && cross-env NODE_ENV=development node dist/server/index.js",
+    "start:server": "npm run build:server && cross-env NODE_ENV=production node dist/server/index.js",
     "start": "npm-run-all --parallel start:server build:client",
-    "test": "export NODE_ENV=test && npm run build:server && npm run build:test && nyc mocha dist/test/main.test.js --timeout 10000 --exit",
+    "test": "npm run build:server && npm run build:test && cross-env NODE_ENV=test nyc mocha dist/test/main.test.js --timeout 10000 --exit",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {
@@ -62,6 +62,7 @@
     "autoprefixer": "^9.3.1",
     "babel-loader": "^8.0.4",
     "clean-webpack-plugin": "^1.0.0",
+    "cross-env": "^5.2.0",
     "css-loader": "^1.0.1",
     "cssnano": "^4.1.7",
     "eslint-plugin-class-property": "^1.1.0",

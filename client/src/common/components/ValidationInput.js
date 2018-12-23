@@ -8,7 +8,7 @@ class ValidationInput extends Component {
         return (
             <React.Fragment>
                 <Input 
-                        invalid={this.props.errors.length > 0} type={this.props.type} 
+                        invalid={this.props.errors.length > 0} type={this.props.type} value={this.props.value || ''}
                         name={this.props.name} id={this.props.id} 
                         onChange={this.props.onInputChange} />
                 {
@@ -25,6 +25,7 @@ ValidationInput.propTypes = {
     type: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
+    value: PropTypes.string,
     errors: PropTypes.array,
     onInputChange: PropTypes.func.isRequired
 }
