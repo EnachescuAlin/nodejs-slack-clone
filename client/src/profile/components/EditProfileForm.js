@@ -53,7 +53,8 @@ class EditProfileForm extends Component {
     componentWillMount() {
         var newState = Object.assign({}, this.state);
         Object.keys(newState.editProfileForm.fields)
-            .forEach((key) => { newState.editProfileForm.fields[key].value = this.props.userDetails[key] })
+            .forEach((key) => { newState.editProfileForm.fields[key].value = this.props.userDetails[key] });
+        this.setState(newState);
     }
 
     handleInputChange = (event) => {
@@ -99,7 +100,8 @@ class EditProfileForm extends Component {
                         <FormGroup>
                             <Label for="username">Username</Label>
                             <ValidationInput 
-                                type="text" name="username" id="username" value={this.props.userDetails.username}
+                                type="text" name="username" id="username" 
+                                value={this.state.editProfileForm.fields.username.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.editProfileForm.fields.username.touched ?
                                     this.state.editProfileForm.errors.username.filter(x => typeof x() === 'string') : []} />
@@ -107,7 +109,8 @@ class EditProfileForm extends Component {
                         <FormGroup>
                             <Label for="firstname">First Name</Label>
                             <ValidationInput 
-                                type="text" name="firstname" id="firstname" value={this.props.userDetails.firstname}
+                                type="text" name="firstname" id="firstname" 
+                                value={this.state.editProfileForm.fields.firstname.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.editProfileForm.fields.firstname.touched ?
                                     this.state.editProfileForm.errors.firstname.filter(x => typeof x() === 'string') : []} />
@@ -115,7 +118,8 @@ class EditProfileForm extends Component {
                         <FormGroup>
                             <Label for="lastname">Last Name</Label>
                             <ValidationInput 
-                                type="text" name="lastname" id="lastname" value={this.props.userDetails.lastname}
+                                type="text" name="lastname" id="lastname" 
+                                value={this.state.editProfileForm.fields.lastname.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.editProfileForm.fields.lastname.touched ?
                                     this.state.editProfileForm.errors.lastname.filter(x => typeof x() === 'string') : []} />
@@ -123,7 +127,8 @@ class EditProfileForm extends Component {
                         <FormGroup>
                             <Label for="email">Email</Label>
                             <ValidationInput 
-                                type="email" name="email" id="email" value={this.props.userDetails.email}
+                                type="email" name="email" id="email" 
+                                value={this.state.editProfileForm.fields.email.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.editProfileForm.fields.email.touched ?
                                     this.state.editProfileForm.errors.email.filter(x => typeof x() === 'string') : []} />

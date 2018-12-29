@@ -14,6 +14,7 @@ import { Switch, Route } from 'react-router-dom';
 import EditProfile from '../../profile/containers/EditProfile';
 import requiresAuth from '../../common/components/requiresAuth';
 import SubMenu from '../../common/components/SubMenu';
+import CreateChannel from '../../channels/containers/CreateChannel';
 
 class Home extends Component {
     constructor() {
@@ -62,10 +63,8 @@ class Home extends Component {
                             <Scrollbars autoHide>
                                 <ListGroup className="menu">
                                     <ListGroupItem tag="a" href="/" className="menu-item">Home</ListGroupItem>
-                                    <ListGroupItem tag="a" href="/" className="menu-item">About</ListGroupItem>
-                                    <ListGroupItem tag={SubMenu} subMenuTitle="Credits">
-                                        <ListGroupItem tag="a" href="/" className="menu-item">Home</ListGroupItem>
-                                        <ListGroupItem tag="a" href="/" className="menu-item">About</ListGroupItem>
+                                    <ListGroupItem tag={SubMenu} subMenuTitle="Channels">
+                                        <ListGroupItem tag="a" href="/channels/create" className="menu-item">Create new channel</ListGroupItem>
                                     </ListGroupItem>
                                 </ListGroup>
                             </Scrollbars>
@@ -73,6 +72,7 @@ class Home extends Component {
                         <PageContent user={this.props.user} onLogoutClick={this.logout} onToggleClick={this.toggleSidebar} fullPage={!this.state.openSidebar}>
                             <Switch>
                                 <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
+                                <Route path='/channels/create' component={requiresAuth(CreateChannel)}/>
                             </Switch>
                         </PageContent>
                     </React.Fragment> 

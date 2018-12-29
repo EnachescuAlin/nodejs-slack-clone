@@ -185,7 +185,7 @@ export default function authentication(state = initialState, action) {
         case authActionTypes.UPDATE_PROFILE_ERROR:
             return Object.assign({}, state, action.error);
         case authActionTypes.UPDATE_PROFILE_SUCCESS:
-            const newState = Object.assign({}, state, { user: { ...action.user, ...state.user } });
+            var newState = Object.assign({}, state, { user: { ...action.user, ...state.user } });
             delete newState.error;
             return newState;
         default:

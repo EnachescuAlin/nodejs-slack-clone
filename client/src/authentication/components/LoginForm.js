@@ -83,6 +83,7 @@ class LoginForm extends Component {
                             <Label for="username">Username</Label>
                             <ValidationInput 
                                 type="text" name="username" id="username" 
+                                value={this.state.loginForm.fields.username.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.loginForm.fields.username.touched ?
                                     this.state.loginForm.errors.username.filter(x => typeof x() === 'string') : []} />
@@ -90,7 +91,8 @@ class LoginForm extends Component {
                         <FormGroup>
                             <Label for="password">Password</Label>
                             <ValidationInput 
-                                type="password" name="password" id="password" 
+                                type="password" name="password" id="password"
+                                value={this.state.loginForm.fields.password.value} 
                                 onInputChange={this.handleInputChange}
                                 errors={this.state.loginForm.fields.password.touched ? 
                                     this.state.loginForm.errors.password.filter(x => typeof x() === 'string') : []} />
