@@ -9,7 +9,7 @@ import EditProfileForm from '../components/EditProfileForm';
 class EditProfile extends Component {
     constructor() {
         super();
-        this.state = { };
+        this.state = {};
     }
 
     render() {
@@ -51,7 +51,8 @@ class EditProfile extends Component {
 
 EditProfile.propTypes = {
     actions: PropTypes.object.isRequired,
-    error: PropTypes.string
+    error: PropTypes.string,
+    user: PropTypes.object
 }
 
 const mapStateToProps = (state) => {

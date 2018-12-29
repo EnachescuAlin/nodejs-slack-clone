@@ -118,7 +118,8 @@ class RegisterForm extends Component {
                         <FormGroup>
                             <Label for="username">Username</Label>
                             <ValidationInput 
-                                type="text" name="username" id="username" 
+                                type="text" name="username" id="username"
+                                value={this.state.registerForm.fields.username.value} 
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.registerForm.fields.username.touched ?
                                     this.state.registerForm.errors.username.filter(x => typeof x() === 'string') : []} />
@@ -127,6 +128,7 @@ class RegisterForm extends Component {
                             <Label for="firstName">First Name</Label>
                             <ValidationInput 
                                 type="text" name="firstName" id="firstName" 
+                                value={this.state.registerForm.fields.firstName.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.registerForm.fields.firstName.touched ?
                                     this.state.registerForm.errors.firstName.filter(x => typeof x() === 'string') : []} />
@@ -135,6 +137,7 @@ class RegisterForm extends Component {
                             <Label for="lastName">Last Name</Label>
                             <ValidationInput 
                                 type="text" name="lastName" id="lastName" 
+                                value={this.state.registerForm.fields.lastName.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.registerForm.fields.lastName.touched ?
                                     this.state.registerForm.errors.lastName.filter(x => typeof x() === 'string') : []} />
@@ -143,6 +146,7 @@ class RegisterForm extends Component {
                             <Label for="email">Email</Label>
                             <ValidationInput 
                                 type="email" name="email" id="email" 
+                                value={this.state.registerForm.fields.email.value}
                                 onInputChange={this.handleInputChange} 
                                 errors={this.state.registerForm.fields.email.touched ?
                                     this.state.registerForm.errors.email.filter(x => typeof x() === 'string') : []} />
@@ -151,6 +155,7 @@ class RegisterForm extends Component {
                             <Label for="password">Password</Label>
                             <ValidationInput 
                                 type="password" name="password" id="password" 
+                                value={this.state.registerForm.fields.password.value}
                                 onInputChange={this.handleInputChange}
                                 errors={this.state.registerForm.fields.password.touched ? 
                                     this.state.registerForm.errors.password.filter(x => typeof x() === 'string') : []} />
@@ -159,6 +164,7 @@ class RegisterForm extends Component {
                             <Label for="confirmPassword">Confirm Password</Label>
                             <ValidationInput 
                                 type="password" name="confirmPassword" id="confirmPassword" 
+                                value={this.state.registerForm.fields.confirmPassword.value}
                                 onInputChange={this.handleInputChange}
                                 errors={this.state.registerForm.fields.confirmPassword.touched ? 
                                     this.state.registerForm.errors.confirmPassword.filter(x => typeof x() === 'string') : []} />
