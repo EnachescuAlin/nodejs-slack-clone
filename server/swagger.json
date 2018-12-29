@@ -398,6 +398,19 @@
         "produces": [
           "application/json"
         ],
+        "parameters": [{
+          "name": "participantId",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        }, {
+          "name": "public",
+          "in": "query",
+          "required": false,
+          "type": "boolean",
+          "enum": [true],
+          "allowEmptyValues": true
+        }],
         "responses": {
           "200": {
             "description": "Success"

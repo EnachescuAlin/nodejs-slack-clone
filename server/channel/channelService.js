@@ -39,6 +39,10 @@ export default class ChannelService {
         })).map(channel => channel.toDto());
     }
 
+    async getChannels() {
+        return (await Channel.find({})).map(channel => channel.toDto());
+    }
+
     async getChannelById(channelId, userId) {
         const channel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findOne({
             '_id': channelId
@@ -50,6 +54,12 @@ export default class ChannelService {
             throw new ForbiddenError('Not allowed to view this channel');
         }
         return channel.toDto();
+    }
+
+    async getChannelsByParticipantId(participantId) {
+        return (await Channel.find({
+            members: participantId
+        })).map(channel => channel.toDto());
     }
 
     async join(channelId, userId) {

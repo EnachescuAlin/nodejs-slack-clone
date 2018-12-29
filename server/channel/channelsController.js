@@ -9,6 +9,8 @@ router.post('/', createChannel);
 router.post('/:id/participants', join);
 router.post('/:id/participants/:guestId', invite);
 
+router.get('/', (req, _, next) => next(req.query.participantId ? null : 'route'), getChannelByParticipant);
+router.get('/', (req, _, next) => next(req.query.public ? null : 'route'), getPublicChannels);
 router.get('/', getChannels);
 router.get('/:id', getChannelById);
 
@@ -27,9 +29,16 @@ function createChannel(req, res, next)
         .catch(err => next(err));
 }
 
-function getChannels(req, res, next)
+function getPublicChannels(req, res, next)
 {
     channelService.getPublicChannels()
+        .then(channels => res.json(channels))
+        .catch(err => next(err));
+}
+
+function getChannels(_, res, next)
+{
+    channelService.getChannels()
         .then(channels => res.json(channels))
         .catch(err => next(err));
 }
@@ -82,8 +91,16 @@ function update(req, res, next)
         isPublic: req.body.isPublic
     };
     Object.keys(channel).forEach(key => channel[key] === undefined && delete channel[key]);
-    channelService.update(channelId, channel,userId)
+    channelService.update(channelId, channel, userId)
         .then(() => res.status(204).json({}))
+        .catch(err => next(err));
+}
+
+function getChannelByParticipant(req, res, next)
+{
+    const participantId = req.query.participantId;
+    channelService.getChannelsByParticipantId(participantId)
+        .then(channels => res.json(channels))
         .catch(err => next(err));
 }
 

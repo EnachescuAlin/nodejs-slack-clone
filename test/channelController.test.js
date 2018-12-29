@@ -199,11 +199,11 @@ describe('Channel', () => {
         });
     });
 
-    describe('getAll', () => {
+    describe('getAllPublic', () => {
         it('it should get all public channels', async () => {
             let res;
             for (let i = 0; i < users.length; i++) {
-                res = await chai.request(server).get('/api/channels/')
+                res = await chai.request(server).get('/api/channels?public=true')
                     .auth(users[i].token, { type: 'bearer' });
 
                 res.should.have.status(200);
@@ -237,6 +237,111 @@ describe('Channel', () => {
 
         it('it should not get all public channels without auth', async () => {
             let res = await chai.request(server).get('/api/channels/');
+
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+
+            res.body.should.have.property('error');
+            res.body.error.should.be.eql('Invalid Token');
+        });
+    });
+
+    describe('getAll', () => {
+        it('it should get all channels', async () => {
+            let res;
+            for (let i = 0; i < users.length; i++) {
+                res = await chai.request(server).get('/api/channels')
+                    .auth(users[i].token, { type: 'bearer' });
+
+                res.should.have.status(200);
+                res.body.should.be.a('array');
+
+                res.body.should.have.length(channels.length);
+
+                for (let j = 0; j < channels.length; j++) {
+                    res.body[j].should.be.a('object');
+
+                    res.body[j].should.not.have.property('error');
+
+                    res.body[j].should.have.property('id');
+                    res.body[j].should.have.property('name');
+                    res.body[j].should.have.property('description');
+                    res.body[j].should.have.property('isPublic');
+                    res.body[j].should.have.property('creationDate');
+                    res.body[j].should.have.property('createdBy');
+                    res.body[j].should.have.property('members');
+
+                    res.body[j].name.should.be.eql(channels[j].channel.name);
+                    res.body[j].description.should.be.eql(channels[j].channel.description);
+                    res.body[j].isPublic.should.be.eql(channels[j].channel.isPublic);
+
+                    res.body[j].createdBy.should.be.eql(users[j].id);
+                    res.body[j].members.should.have.length(1);
+                    res.body[j].members[0].should.be.eql(users[j].id);
+                }
+            }
+        });
+
+        it('it should not get all channels without auth', async () => {
+            let res = await chai.request(server).get('/api/channels/');
+
+            res.should.have.status(401);
+            res.body.should.be.a('object');
+
+            res.body.should.have.property('error');
+            res.body.error.should.be.eql('Invalid Token');
+        });
+    });
+
+    describe('getChannelByParticipant', () => {
+        const customChannels = [
+            {
+                channel: {
+                    name: "private3",
+                    description: "private3",
+                    isPublic: false
+                },
+                id: ""
+            },
+            {
+                channel: {
+                    name: "private4",
+                    description: "private4",
+                    isPublic: false
+                },
+                id: ""
+            }
+        ];
+
+        before(async () => {
+            for (let i = 0; i < customChannels.length; i++) {
+                const res = await chai.request(server).post('/api/channels/')
+                    .auth(users[i + 2].token, { type: 'bearer' })
+                    .send(customChannels[i].channel);
+                customChannels[i].id = res.body.id;
+            }
+            
+            await chai.request(server)
+                .post(`/api/channels/${customChannels[0].id}/participants/${users[3].id}`)
+                .auth(users[2].token, { type: 'bearer' });
+        });
+
+        it('it should get all channels joined by an user', async () => {
+            const res = await chai.request(server).get(`/api/channels?participantId=${users[3].id}`)
+                    .auth(users[3].token, { type: 'bearer' });
+
+            res.should.have.status(200);
+            res.body.should.be.a('array');
+
+            res.body.should.have.length(3); 
+            for (let index = 0; index < 3; index++) {
+                res.body[index].members.should.not.be.empty;
+                res.body[index].members.filter(elem => elem == users[3].id).should.have.length(1);
+            }
+        });
+
+        it('it should not get all channels without auth', async () => {
+            let res = await chai.request(server).get(`/api/channels?participantId=${users[3].id}`);
 
             res.should.have.status(401);
             res.body.should.be.a('object');
