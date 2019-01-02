@@ -14,7 +14,7 @@ export const channelActionTypes = {
 const channelService = new ChannelService();
 
 export const actions = {
-    getChannels,
+    getJoinedChannels,
     addChannel
 }
 
@@ -40,7 +40,7 @@ const dispatchError = (message, statusCode, dispatch) => {
     }
 }
 
-function getChannels() {
+function getJoinedChannels(participantId) {
     const success = (channels) => ({
         type: channelActionTypes.GET_CHANNELS,
         channels
@@ -48,7 +48,7 @@ function getChannels() {
 
     return async dispatch => {
         try {
-            const response = await channelService.get();
+            const response = await channelService.getByParticipant(participantId);
             dispatch(success(response.data));
         } catch (error) {
             dispatchError(error.response.data, error.response.statusCode, dispatch);
@@ -73,16 +73,16 @@ function addChannel(channel) {
 }
 
 const initialState = {
-    channels: [],
+    joined: [],
     errors: {}
 }
 
 export default function channels(state = initialState, action) {
     switch (action.type) {
         case channelActionTypes.GET_CHANNELS:
-            return Object.assign({}, state, { channels: action.channels });
+            return Object.assign({}, state, { joined: action.channels });
         case channelActionTypes.ADD_CHANNEL:
-            return Object.assign({}, state, { channels: [ ...state.channels, action.newChannel ] });
+            return Object.assign({}, state, { joined: [ ...state.channels, action.newChannel ] });
         case channelActionTypes.VALIDATION_ERROR:
             return Object.assign({}, state, { errors: { ...state.errors, validationError: action.error } });
         case channelActionTypes.AUTHORIZATION_ERROR:
