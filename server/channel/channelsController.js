@@ -9,6 +9,9 @@ router.post('/', createChannel);
 router.post('/:id/participants', join);
 router.post('/:id/participants/:guestId', invite);
 
+router.get('/', (req, _, next) => next(req.query.name ? null : 'route'), getChannelsByName);
+router.get('/', (req, _, next) => next(req.query.participantId ? null : 'route'), getChannelByParticipant);
+router.get('/', (req, _, next) => next(req.query.public ? null : 'route'), getChannelsByIsPublic);
 router.get('/', getChannels);
 router.get('/:id', getChannelById);
 
@@ -27,9 +30,23 @@ function createChannel(req, res, next)
         .catch(err => next(err));
 }
 
-function getChannels(req, res, next)
+function getChannelsByIsPublic(req, res, next)
 {
-    channelService.getPublicChannels()
+    channelService.getByIsPublic(req.query.public)
+        .then(channels => res.json(channels))
+        .catch(err => next(err));
+}
+
+function getChannelsByName(req, res, next)
+{
+    channelService.getByName(req.query.name, req.query.public)
+        .then(channels => res.json(channels))
+        .catch(err => next(err));
+}
+
+function getChannels(_, res, next)
+{
+    channelService.getAll()
         .then(channels => res.json(channels))
         .catch(err => next(err));
 }
@@ -38,7 +55,7 @@ function getChannelById(req, res, next)
 {
     const channelId = req.params.id;
     const userId = req.user.sub;
-    channelService.getChannelById(channelId, userId)
+    channelService.getById(channelId, userId)
         .then(channel => res.json(channel))
         .catch(err => next(err));
 }
@@ -82,8 +99,16 @@ function update(req, res, next)
         isPublic: req.body.isPublic
     };
     Object.keys(channel).forEach(key => channel[key] === undefined && delete channel[key]);
-    channelService.update(channelId, channel,userId)
+    channelService.update(channelId, channel, userId)
         .then(() => res.status(204).json({}))
+        .catch(err => next(err));
+}
+
+function getChannelByParticipant(req, res, next)
+{
+    const participantId = req.query.participantId;
+    channelService.getByParticipantId(participantId)
+        .then(channels => res.json(channels))
         .catch(err => next(err));
 }
 

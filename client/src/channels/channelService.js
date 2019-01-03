@@ -26,4 +26,9 @@ export default class ChannelService {
         const config = { headers: authHeader() };
         return axios.delete(`/api/channels/${channelId}/participants/${participantId}`, null, config);
     }
+
+    getByParticipant = (participantId) => {
+        const config = { headers: authHeader() };
+        return axios.get(`/api/channels?participantId=${participantId}`, config);
+    }
 }

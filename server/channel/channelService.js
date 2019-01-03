@@ -33,13 +33,17 @@ export default class ChannelService {
         return newChannel.toDto();
     }
 
-    async getPublicChannels() {
+    async getByIsPublic(isPublic) {
         return (await Channel.find({
-            isPublic: true
+            isPublic: isPublic
         })).map(channel => channel.toDto());
     }
 
-    async getChannelById(channelId, userId) {
+    async getAll() {
+        return (await Channel.find({})).map(channel => channel.toDto());
+    }
+
+    async getById(channelId, userId) {
         const channel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findOne({
             '_id': channelId
         }) : null;
@@ -50,6 +54,24 @@ export default class ChannelService {
             throw new ForbiddenError('Not allowed to view this channel');
         }
         return channel.toDto();
+    }
+
+    async getByParticipantId(participantId) {
+        return (await Channel.find({
+            members: participantId
+        })).map(channel => channel.toDto());
+    }
+
+    async getByName(name, isPublic) {
+        let query = {
+            name: {
+                $regex: `.*${name}.*`,
+                $options: 'i'
+            }
+        };
+        if (typeof isPublic !== 'undefined')
+            query.isPublic = isPublic;
+        return (await Channel.find(query)).map(channel => channel.toDto());
     }
 
     async join(channelId, userId) {
