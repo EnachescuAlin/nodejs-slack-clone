@@ -404,12 +404,15 @@
           "required": false,
           "type": "string"
         }, {
+          "name": "name",
+          "in": "query",
+          "required": false,
+          "type": "string"
+        }, {
           "name": "public",
           "in": "query",
           "required": false,
-          "type": "boolean",
-          "enum": [true],
-          "allowEmptyValues": true
+          "type": "boolean"
         }],
         "responses": {
           "200": {

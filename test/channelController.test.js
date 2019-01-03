@@ -201,37 +201,34 @@ describe('Channel', () => {
 
     describe('getAllPublic', () => {
         it('it should get all public channels', async () => {
-            let res;
-            for (let i = 0; i < users.length; i++) {
-                res = await chai.request(server).get('/api/channels?public=true')
-                    .auth(users[i].token, { type: 'bearer' });
+            let res = await chai.request(server).get('/api/channels?public=true')
+                .auth(users[0].token, { type: 'bearer' });
 
-                res.should.have.status(200);
-                res.body.should.be.a('array');
+            res.should.have.status(200);
+            res.body.should.be.a('array');
 
-                res.body.should.have.length(2);
+            res.body.should.have.length(2);
 
-                for (let j = 0; j < 2; j++) {
-                    res.body[j].should.be.a('object');
+            for (let j = 0; j < 2; j++) {
+                res.body[j].should.be.a('object');
 
-                    res.body[j].should.not.have.property('error');
+                res.body[j].should.not.have.property('error');
 
-                    res.body[j].should.have.property('id');
-                    res.body[j].should.have.property('name');
-                    res.body[j].should.have.property('description');
-                    res.body[j].should.have.property('isPublic');
-                    res.body[j].should.have.property('creationDate');
-                    res.body[j].should.have.property('createdBy');
-                    res.body[j].should.have.property('members');
+                res.body[j].should.have.property('id');
+                res.body[j].should.have.property('name');
+                res.body[j].should.have.property('description');
+                res.body[j].should.have.property('isPublic');
+                res.body[j].should.have.property('creationDate');
+                res.body[j].should.have.property('createdBy');
+                res.body[j].should.have.property('members');
 
-                    res.body[j].name.should.be.eql(channels[j].channel.name);
-                    res.body[j].description.should.be.eql(channels[j].channel.description);
-                    res.body[j].isPublic.should.be.eql(channels[j].channel.isPublic);
+                res.body[j].name.should.be.eql(channels[j].channel.name);
+                res.body[j].description.should.be.eql(channels[j].channel.description);
+                res.body[j].isPublic.should.be.eql(channels[j].channel.isPublic);
 
-                    res.body[j].createdBy.should.be.eql(users[j].id);
-                    res.body[j].members.should.have.length(1);
-                    res.body[j].members[0].should.be.eql(users[j].id);
-                }
+                res.body[j].createdBy.should.be.eql(users[j].id);
+                res.body[j].members.should.have.length(1);
+                res.body[j].members[0].should.be.eql(users[j].id);
             }
         });
 
