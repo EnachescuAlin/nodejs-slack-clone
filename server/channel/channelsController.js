@@ -65,7 +65,7 @@ function join(req, res, next)
     const channelId = req.params.id;
     const userId = req.user.sub;
     channelService.join(channelId, userId)
-        .then(() => res.status(204).json({}))
+        .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 
@@ -75,7 +75,7 @@ function invite(req, res, next)
     const guestId = req.params.guestId;
     const userId = req.user.sub;
     channelService.invite(channelId, userId, guestId)
-        .then(() => res.status(204).json({}))
+        .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 

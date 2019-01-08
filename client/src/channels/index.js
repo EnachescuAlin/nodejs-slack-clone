@@ -5,17 +5,19 @@ export const channelActionTypes = {
     SELECT_CHANNEL: "talkpeach/channels/SELECT_CHANNEL",
     ADD_CHANNEL: "talkpeach/channels/ADD_CHANNEL",
     UPDATE_CHANNEL: "talkpeach/channels/UPDATE_CHANNEL",
-    ADD_PARTICIPANT: "talkpeach/channels/ADD_PARTICIPANT",
-    REMOVE_PARTICIPANT: "talkpeach/channels/REMOVE_PARTICIPANT",
     AUTHORIZATION_ERROR: "talkpeach/channels/AUTHORIZATION_ERROR",
-    VALIDATION_ERROR: "talkpeach/channels/VALIDATION_ERROR"
+    VALIDATION_ERROR: "talkpeach/channels/VALIDATION_ERROR",
+    SEARCH_CHANNELS: "talkpeach/channels/SEARCH_CHANNELS"
 }
 
 const channelService = new ChannelService();
 
 export const actions = {
     getJoinedChannels,
-    addChannel
+    addChannel,
+    searchChannels,
+    addParticipant,
+    joinChannel
 }
 
 const validationError = (error) => ({
@@ -56,6 +58,45 @@ function getJoinedChannels(participantId) {
     }
 }
 
+function searchChannels(name) {
+    const foundChannels = (channels) => ({
+        type: channelActionTypes.SEARCH_CHANNELS,
+        channels 
+    });
+
+    return async dispatch => {
+        try {
+            const response = await channelService.getByName(name);
+            dispatch(foundChannels(response.data));
+        } catch (error) {
+            dispatchError(error.response.data, error.response.statusCode, dispatch);
+        }
+    }
+}
+
+function addParticipant(channelId, participantId) {
+    return async dispatch => {
+        try {
+            await channelService.addParticipant(channelId, participantId);
+            dispatch(getJoinedChannels(participantId));
+        } catch (error) {
+            dispatchError(error.response.data, error.response.statusCode, dispatch);
+        }
+    }
+}
+
+function joinChannel(channelId, participantId) {
+    return async dispatch => {
+        try {
+            await channelService.join(channelId);
+            dispatch(getJoinedChannels(participantId));
+        } catch (error) {
+            console.log(error);
+            dispatchError(error.response.data, error.response.statusCode, dispatch);
+        }
+    }
+}
+
 function addChannel(channel) {
     const success = (newChannel) => ({
         type: channelActionTypes.ADD_CHANNEL,
@@ -81,6 +122,8 @@ export default function channels(state = initialState, action) {
     switch (action.type) {
         case channelActionTypes.GET_CHANNELS:
             return Object.assign({}, state, { joined: action.channels });
+        case channelActionTypes.SEARCH_CHANNELS:
+            return Object.assign({}, state, { searchResult: action.channels });
         case channelActionTypes.ADD_CHANNEL:
             return Object.assign({}, state, { joined: [ ...state.channels, action.newChannel ] });
         case channelActionTypes.VALIDATION_ERROR:
