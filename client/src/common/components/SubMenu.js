@@ -6,7 +6,7 @@ class SubMenu extends Component {
     constructor() {
         super();
         this.state = {
-            isOpened: false
+            isOpened: true
         }
     }
 
@@ -18,6 +18,7 @@ class SubMenu extends Component {
         return (
             <React.Fragment>
                 <ListGroupItem className="menu-item" onClick={this.toggle}>
+                    { this.props.logo ? <i className={`mr-2 fas fa-${this.props.logo}`}></i> : null }
                     {this.props.subMenuTitle}
                     <i className={`ml-2 fas ${this.state.isOpened ? 'fa-caret-up' : 'fa-caret-down'}`}></i>
                 </ListGroupItem>
@@ -31,6 +32,7 @@ class SubMenu extends Component {
 
 SubMenu.propTypes = {
     subMenuTitle: PropTypes.string.isRequired,
+    logo: PropTypes.string,
     children: PropTypes.any
 }
 

@@ -22,6 +22,11 @@ export default class ChannelService {
         return axios.post(`/api/channels/${channelId}/participants/${participantId}`, null, config);
     }
 
+    join = (channelId) => {
+        const config = { headers: authHeader() };
+        return axios.post(`/api/channels/${channelId}/participants`, null, config);
+    }
+
     removeParticipant = (channelId, participantId) => {
         const config = { headers: authHeader() };
         return axios.delete(`/api/channels/${channelId}/participants/${participantId}`, null, config);
@@ -30,5 +35,10 @@ export default class ChannelService {
     getByParticipant = (participantId) => {
         const config = { headers: authHeader() };
         return axios.get(`/api/channels?participantId=${participantId}`, config);
+    }
+
+    getByName = (name) => {
+        const config = { headers: authHeader() };
+        return axios.get(`/api/channels?name=${name}`, config);
     }
 }
