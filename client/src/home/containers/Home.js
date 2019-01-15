@@ -19,6 +19,8 @@ import SearchByName from '../../channels/components/SearchByName';
 import Menu from '../components/Menu';
 import socketEventEmits from '../../sockets';
 import Channel from '../../channels/containers/Channel';
+import requiresOwner from '../../channels/components/requiresOwner';
+import EditChannel from '../../channels/containers/EditChannel';
 
 class Home extends Component {
     constructor() {
@@ -32,18 +34,20 @@ class Home extends Component {
     }
 
     componentWillMount() {
-        this.props.actions.getCurrentUser()
-            .then(() => {
-                this.props.actions.getJoinedChannels(this.props.user.id)
-                    .then(() => {
-                        if (!this.state.isSocketConnected) {
-                            this.props.joinedChannels.forEach(channel => {
-                                socketEventEmits.subscribeToChannel(channel.id);
-                            });
-                            this.setState({ isSocketConnected: true });
-                        }
-                    });
-            });
+        if (!this.props.user || !this.props.joinedChannels) {
+            this.props.actions.getCurrentUser()
+                .then(() => {
+                    this.props.actions.getJoinedChannels(this.props.user.id)
+                        .then(() => {
+                            if (!this.state.isSocketConnected) {
+                                this.props.joinedChannels.forEach(channel => {
+                                    socketEventEmits.subscribeToChannel(channel.id);
+                                });
+                                this.setState({ isSocketConnected: true });
+                            }
+                        });
+                });
+        }
         window.addEventListener('resize', this.handleResize);
         this.handleResize();
     }
@@ -88,9 +92,10 @@ class Home extends Component {
                                     timeout={300}>
                                     <Switch location={this.props.location}>
                                         <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
-                                        <Route path='/channels/create' component={requiresAuth(CreateChannel)}/>
-                                        <Route path='/channels/search' component={requiresAuth(SearchByName)}/>
-                                        <Route path='/channels/:channelId' component={requiresAuth(Channel)}/>
+                                        <Route path='/channels/create' component={requiresAuth(CreateChannel)} />
+                                        <Route path='/channels/search' component={requiresAuth(SearchByName)} />
+                                        <Route path='/channels/:channelId' exact component={requiresAuth(Channel)} />
+                                        <Route path='/channels/:channelId/edit' exact component={requiresOwner(EditChannel)} />
                                     </Switch>
                                 </CSSTransition>
                             </TransitionGroup>

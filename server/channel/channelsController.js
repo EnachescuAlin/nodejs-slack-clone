@@ -100,7 +100,7 @@ function update(req, res, next)
     };
     Object.keys(channel).forEach(key => channel[key] === undefined && delete channel[key]);
     channelService.update(channelId, channel, userId)
-        .then(() => res.status(204).json({}))
+        .then((updatedChannel) => res.status(200).json(updatedChannel))
         .catch(err => next(err));
 }
 

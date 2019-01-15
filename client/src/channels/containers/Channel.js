@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import { bindActionCreators } from 'redux';
-import { actions } from '../../chat';
+import { actions as chatActions } from '../../chat';
+import { actions as channelsActions } from '..'; 
 import { connect } from 'react-redux';
 import Spinner from '../../common/components/Spinner';
 import socketEventEmits from '../../sockets';
 import Message from '../../chat/components/Message';
 import { Scrollbars } from 'react-custom-scrollbars';
 import AddMessageForm from '../../chat/components/AddMessageForm';
+import OwnerButtons from '../components/OwnerButtons';
 
 class Channel extends Component {
     onAddMessage = (text) => {
@@ -27,8 +29,11 @@ class Channel extends Component {
         return false
     } 
 
+    isOwner = () => this.props.user && this.props.channel && this.props.channel.createdBy === this.props.user.id;
+
     componentWillMount() {
         this.props.actions.cleanMessages();
+        this.props.actions.selectChannel(this.props.match.params.channelId);
         socketEventEmits.getAllMessagesFromChannel(this.props.match.params.channelId);
         this.props.actions.getMessagesFromChannel();
     }
@@ -44,6 +49,7 @@ class Channel extends Component {
                 {
                     this.props.messages ?
                         <div className="pt-5 mt-4">
+                            { this.isOwner() ? <OwnerButtons baseUrl={this.props.match.url}/> : null }
                             <div className="wrapper full-height">
                                 <Scrollbars ref="scrollbars">
                                     { this.props.messages.map((message, index) => 
@@ -66,16 +72,18 @@ Channel.propTypes = {
     messages: PropTypes.array,
     actions: PropTypes.object.isRequired,
     match: ReactRouterPropTypes.match,
-    user: PropTypes.object
+    user: PropTypes.object,
+    channel: PropTypes.object
 }
 
 const mapStateToProps = (state) => ({
     messages: state.chat.messages,
-    user: state.authentication.user
+    user: state.authentication.user,
+    channel: state.channels.selected
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    actions: bindActionCreators(actions, dispatch)
+    actions: bindActionCreators({ ...channelsActions, ...chatActions }, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Channel);
