@@ -34,17 +34,15 @@ class Home extends Component {
     componentWillMount() {
         this.props.actions.getCurrentUser()
             .then(() => {
-                this.props.actions.getDirrectMessages(this.props.user.directMessages)
+                this.props.actions.getDirectMessages(this.props.user.directMessages);
+                this.props.actions.getJoinedChannels(this.props.user.id)
                     .then(() => {
-                        this.props.actions.getJoinedChannels(this.props.user.id)
-                            .then(() => {
-                                if (!this.state.isSocketConnected) {
-                                    this.props.joinedChannels.forEach(channel => {
-                                        socketEventEmits.subscribeToChannel(channel.id);
-                                    });
-                                    this.setState({ isSocketConnected: true });
-                                }
+                        if (!this.state.isSocketConnected) {
+                            this.props.joinedChannels.forEach(channel => {
+                                socketEventEmits.subscribeToChannel(channel.id);
                             });
+                            this.setState({ isSocketConnected: true });
+                        }
                     });
             });
         window.addEventListener('resize', this.handleResize);

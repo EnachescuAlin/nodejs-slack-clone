@@ -41,7 +41,7 @@ class Menu extends Component {
 
 Menu.propTypes = {
     joinedChannels: PropTypes.array.isRequired,
-    directMessages: PropTypes.any.isRequired
+    directMessages: PropTypes.array.isRequired
 }
 
 export default Menu;
