@@ -6,6 +6,7 @@ import errorHandler from './middlewares/errorHandler';
 import jwt from './middlewares/jwt';
 import addWebpackHotMiddleware from './middlewares/webpackMiddleware';
 import path from 'path';
+import socketIo from 'socket.io';
 
 import userController from './user/usersController';
 import channelController from './channel/channelsController';
@@ -15,6 +16,7 @@ import mongoose from 'mongoose';
 
 import swaggerUi from 'swagger-ui-express';
 import swaggerDocument from './swagger.json';
+import socketMiddleware from './middlewares/socketMiddleware';
 
 let mongodb_url;
 if (process.env.NODE_ENV === 'test') {
@@ -40,6 +42,8 @@ if (process.env.NODE_ENV != 'test') {
 }
 
 const app = express(http);
+var server = http.createServer(app)
+const io = socketIo(server);
 
 app.use(json());
 
@@ -66,9 +70,12 @@ if (process.env.NODE_ENV == 'development') {
     });
 }
 
+// configure web sockets
+io.on('connection', socketMiddleware(io));
+
 // start server
 const port = 3000;
-app.listen(port, function () {
+server.listen(port, function () {
     console.log('Server listening on port ' + port);
 });
 
