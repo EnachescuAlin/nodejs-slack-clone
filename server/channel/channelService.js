@@ -185,5 +185,6 @@ export default class ChannelService {
         Object.assign(existingChannel, channel);
 
         await existingChannel.save();
+        return existingChannel.toDto();
     }
 }

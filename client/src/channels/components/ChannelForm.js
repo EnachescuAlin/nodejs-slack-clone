@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Validators from '../../common/validators';
-import { Card, CardBody, CardTitle, Form, FormGroup, Label, Button, UncontrolledAlert } from 'reactstrap';
+import { Card, CardBody, CardTitle, Form, FormGroup, Label, Button, UncontrolledAlert, Input } from 'reactstrap';
 import ValidationInput from '../../common/components/ValidationInput';
 
 class ChannelForm extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             channelForm: {
                 errors: {
@@ -19,29 +19,20 @@ class ChannelForm extends Component {
                 },
                 fields: {
                     name: {
-                        value: '',
+                        value: this.props.channelDetails.name || '',
                         touched: false
                     },
                     description: {
-                        value: '',
+                        value: this.props.channelDetails.description || '',
                         touched: false
                     },
                     isPublic: {
-                        value: false,
+                        value: this.props.channelDetails.isPublic || false,
                         touched: false
                     }
                 },
                 isValid: () => Validators.evaluate(this.state.channelForm.errors)
             }
-        }
-    }
-
-    componentWillMount() {
-        if (this.props.channelDetails) {
-            var newState = Object.assign({}, this.state);
-            Object.keys(newState.channelForm.fields)
-                .forEach((key) => { newState.channelForm.fields[key].value = this.props.channelDetails[key] });
-            this.setState(newState);
         }
     }
 
@@ -68,7 +59,7 @@ class ChannelForm extends Component {
             description: this.state.channelForm.fields.description.value,
             isPublic: this.state.channelForm.fields.isPublic.value
         };
-        this.props.onSubmit(channel);
+        this.props.onSubmit(this.props.channelDetails.id, channel);
         event.preventDefault();
     }
 
@@ -97,9 +88,10 @@ class ChannelForm extends Component {
                                     this.state.channelForm.errors.description.filter(x => typeof x() === 'string') : []} />
                         </FormGroup>
                         <div className="custom-control custom-checkbox">
-                            <ValidationInput 
+                            <Input 
                                 type="checkbox" name="isPublic" id="is-public" className="custom-control-input"
-                                onInputChange={this.handleInputChange} />
+                                onChange={this.handleInputChange} 
+                                checked={this.state.channelForm.fields.isPublic.value} />
                             <Label className="custom-control-label" for="is-public">Public</Label>
                         </div>
                         {

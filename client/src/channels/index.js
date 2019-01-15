@@ -7,6 +7,7 @@ export const channelActionTypes = {
     UPDATE_CHANNEL: "talkpeach/channels/UPDATE_CHANNEL",
     AUTHORIZATION_ERROR: "talkpeach/channels/AUTHORIZATION_ERROR",
     VALIDATION_ERROR: "talkpeach/channels/VALIDATION_ERROR",
+    NOT_FOUND_ERROR: "talkpeach/channels/NOT_FOUND_ERROR",
     SEARCH_CHANNELS: "talkpeach/channels/SEARCH_CHANNELS"
 }
 
@@ -17,7 +18,9 @@ export const actions = {
     addChannel,
     searchChannels,
     addParticipant,
-    joinChannel
+    joinChannel,
+    updateChannel,
+    selectChannel
 }
 
 const validationError = (error) => ({
@@ -30,10 +33,18 @@ const authorizationError = (error) => ({
     error
 });
 
+const notFoundError = (error) => ({
+    type: channelActionTypes.NOT_FOUND_ERROR,
+    error
+});
+
 const dispatchError = (message, statusCode, dispatch) => {
     switch (statusCode) {
         case 422:
             dispatch(validationError(message));
+            break;
+        case 404:
+            dispatch(notFoundError(message));
             break;
         case 401:
         default:
@@ -113,6 +124,38 @@ function addChannel(channel) {
     }
 }
 
+function updateChannel(id, channel) {
+    const success = (updatedChannel) => ({
+        type: channelActionTypes.UPDATE_CHANNEL,
+        updatedChannel
+    });
+
+    return async dispatch => {
+        try {
+            const response = await channelService.update(id, channel);
+            dispatch(success(response.data));
+        } catch (error) {
+            dispatchError(error.response.data, error.response.statusCode, dispatch);
+        }
+    }
+}
+
+function selectChannel(id) {
+    const success = (channel) => ({
+        type: channelActionTypes.SELECT_CHANNEL,
+        channel
+    });
+
+    return async dispatch => {
+        try {
+            const response = await channelService.get(id);
+            dispatch(success(response.data));
+        } catch (error) {
+            dispatchError(error.response.data, error.response.statusCode, dispatch);
+        }
+    }
+}
+
 const initialState = {
     joined: [],
     errors: {}
@@ -126,10 +169,24 @@ export default function channels(state = initialState, action) {
             return Object.assign({}, state, { searchResult: action.channels });
         case channelActionTypes.ADD_CHANNEL:
             return Object.assign({}, state, { joined: [ ...state.channels, action.newChannel ] });
+        case channelActionTypes.UPDATE_CHANNEL:
+            return {
+                ...state,
+                joined: state.joined.map(channel => {
+                    if (channel.id === action.updatedChannel.id)
+                        return action.updatedChannel;
+                    return channel;
+                }),
+                selected: action.updatedChannel
+            }
+        case channelActionTypes.SELECT_CHANNEL:
+            return Object.assign({}, state, { selected: action.channel });
         case channelActionTypes.VALIDATION_ERROR:
             return Object.assign({}, state, { errors: { ...state.errors, validationError: action.error } });
         case channelActionTypes.AUTHORIZATION_ERROR:
             return Object.assign({}, state, { errors: { ...state.errors, authorizationError: action.error } });
+        case channelActionTypes.NOT_FOUND_ERROR:
+            return Object.assign({}, state, { errors: { ...state.errors, notFoundError: action.error } });
         default:
             return state;
     }
