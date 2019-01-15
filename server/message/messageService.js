@@ -104,10 +104,10 @@ class MessageService {
         if (! await mongoose.Types.ObjectId.isValid(channelId))
             throw new NotFoundError(`Channel with id = ${channelId} was not found`);
 
-        var query = Message.find({ 'receiver.channelId': channelId }).sort('-addDate');
+        var query = Message.find({ 'receiver.channelId': channelId });
 
         if (limit)
-            query = query.skip(offset).limit(limit);
+            query = query.sort('-addDate').skip(offset).limit(limit);
 
         return (await query).map(message => message.toDto());
     }
