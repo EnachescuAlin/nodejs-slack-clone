@@ -24,13 +24,24 @@ class Menu extends Component {
                         )
                     }
                 </ListGroupItem>
+                <ListGroupItem tag={SubMenu} logo="users" subMenuTitle="Direct messages">
+                    <ListGroupItem tag={NavLink} to="somethingLikeChannelsSearch" className="menu-item">
+                        <i className="fas fa-plus-circle mr-2"></i>New direct message
+                    </ListGroupItem>
+                    { 
+                        this.props.directMessages.map((user, index) => 
+                            <ListGroupItem tag={NavLink} key={index} to={`nothingForMom`} className="menu-item">#{user.username}</ListGroupItem>
+                        )
+                    }
+                </ListGroupItem>
             </ListGroup>
         );
     }
 }
 
 Menu.propTypes = {
-    joinedChannels: PropTypes.array.isRequired
+    joinedChannels: PropTypes.array.isRequired,
+    directMessages: PropTypes.any.isRequired
 }
 
 export default Menu;

@@ -34,14 +34,17 @@ class Home extends Component {
     componentWillMount() {
         this.props.actions.getCurrentUser()
             .then(() => {
-                this.props.actions.getJoinedChannels(this.props.user.id)
+                this.props.actions.getDirrectMessages(this.props.user.directMessages)
                     .then(() => {
-                        if (!this.state.isSocketConnected) {
-                            this.props.joinedChannels.forEach(channel => {
-                                socketEventEmits.subscribeToChannel(channel.id);
+                        this.props.actions.getJoinedChannels(this.props.user.id)
+                            .then(() => {
+                                if (!this.state.isSocketConnected) {
+                                    this.props.joinedChannels.forEach(channel => {
+                                        socketEventEmits.subscribeToChannel(channel.id);
+                                    });
+                                    this.setState({ isSocketConnected: true });
+                                }
                             });
-                            this.setState({ isSocketConnected: true });
-                        }
                     });
             });
         window.addEventListener('resize', this.handleResize);
@@ -77,7 +80,7 @@ class Home extends Component {
                     <React.Fragment>
                         <Sidebar logo={logo} opened={this.state.openSidebar} onBackDropClick={this.toggleSidebar} backDropActive={this.state.backDropActive()}>
                             <Scrollbars autoHide>
-                                <Menu joinedChannels={this.props.joinedChannels} />
+                                <Menu joinedChannels={this.props.joinedChannels} directMessages={this.props.directMessages}/>
                             </Scrollbars>
                         </Sidebar>
                         <PageContent user={this.props.user} onLogoutClick={this.logout} onToggleClick={this.toggleSidebar} fullPage={!this.state.openSidebar}>
@@ -109,7 +112,8 @@ Home.propTypes = {
     user: PropTypes.object,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    joinedChannels: PropTypes.array
+    joinedChannels: PropTypes.array,
+    directMessages: PropTypes.array
 }
 
 const mapStateToProps = (state) => {

@@ -25,4 +25,19 @@ export default (io) => (socket) => {
         var messages = await messageService.getByChannel(channelId);
         socket.emit('receiveAllMessages', messages);
     });
+
+    socket.on('sendToUser', async ({}) => {
+        var newMessage = await messageService.add(message, sender);
+        io.in(room).emit('newMessageToUser', newMessage);
+    });
+
+    socket.on('getMessagesBySenderAndReceiver', async ({senderId, receiverId, page, pageSize}) => {
+        var messages = await messageService.getBySenderAndReceiver(senderId, receiverId, pageSize, (page - 1) * pageSize);
+        socket.emit('receiveMessagesBySenderAndReceiver', messages);
+    });
+
+    socket.on('getAllMessagesBySenderAndReceiver', async ({senderId, receiverId}) => {
+        var messages = await messageService.getBySenderAndReceiver(senderId, receiverId);
+        socket.emit('receiveAllMessagesBySenderAndReceiver', messages);
+    });
 }

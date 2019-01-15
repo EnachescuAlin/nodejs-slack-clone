@@ -12,6 +12,7 @@ export const authActionTypes = {
     REGISTRATION_SUCCESS: 'talkpeach/authentication/REGISTRATION_SUCCESS',
     REGISTRATION_ERROR: 'talkpeach/authentication/REGISTRATION_ERROR',
     GET_CURRENT_USER: 'talkpeach/authentication/GET_CURRENT_USER',
+    GET_DIRECT_MESSAGES: 'talkpeach/authentication/GET_DIRECT_MESSAGES',
     UPDATE_PROFILE_REQUEST: 'talkpeach/authentication/UPDATE_PROFILE_REQUEST',
     UPDATE_PROFILE_SUCCESS: 'talkpeach/authentication/UPDATE_PROFILE_SUCCESS',
     UPDATE_PROFILE_ERROR: 'talkpeach/authentication/UPDATE_PROFILE_ERROR'
@@ -24,6 +25,7 @@ export const actions = {
     logout,
     register,
     getCurrentUser,
+    getDirectMessages,
     updateProfile
 };
 
@@ -121,6 +123,45 @@ function getCurrentUser() {
     }
 }
 
+function getDirectMessages(directMessages) {
+    const success = (users) => {
+        return {
+            type: authActionTypes.GET_DIRECT_MESSAGES,
+            users
+        };
+    };
+    const failure = (error) => {
+        return {
+            type: authActionTypes.GET_DIRECT_MESSAGES,
+            error
+        };
+    };
+    const requestStarted = () => {
+        return {
+            type: authActionTypes.GET_DIRECT_MESSAGES
+        };
+    };
+    return async dispatch => {
+        try {
+            dispatch(requestStarted());
+            var i, users = [];
+            for (i = 0; i < directMessages.length; i++) {
+                const res = await userService.getUser(directMessages[i]);
+                if (res.status === 200) {
+                    await users.push(res.data);
+                } else {
+                    dispatch(failure(res.data || 'Unknown error!'));
+                }
+            }
+            if (i === directMessages.length) {
+                dispatch(success(users));
+            }
+        } catch (error) {
+            dispatch(failure(error))
+        }
+    }
+}
+
 function updateProfile(userId, user) {
     const success = (user) => {
         return {
@@ -182,6 +223,8 @@ export default function authentication(state = initialState, action) {
             return Object.assign({}, state, action.error);
         case authActionTypes.GET_CURRENT_USER:
             return Object.assign({}, state, { user: action.user });
+        case authActionTypes.GET_DIRECT_MESSAGES:
+            return Object.assign({}, state, { users: action.users });
         case authActionTypes.UPDATE_PROFILE_ERROR:
             return Object.assign({}, state, action.error);
         case authActionTypes.UPDATE_PROFILE_SUCCESS:
