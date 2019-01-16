@@ -81,13 +81,13 @@ class UserService {
     }
 
     async getByUsername(userName) {
-        const user = await User.findOne({
-            'username': userName
-        });
-        if (!user) {
-            throw new NotFoundError(`User with username ${userName} was not found`);
-        }
-        return user.toDto();
+        let query = {
+            username: {
+                $regex: `.*${userName}.*`,
+                $options: 'i'
+            }
+        };
+        return (await User.find(query)).map(user => user.toDto());
     }
 
     async update(id, user) {
@@ -104,6 +104,26 @@ class UserService {
         Object.assign(existingUser, user);
 
         await existingUser.save();
+    }
+
+    async addDirectMessage(currentUserId, userId) {
+        const currentUser = await mongoose.Types.ObjectId.isValid(currentUserId)
+            ? await User.findById(currentUserId)
+            : null;
+        if (!currentUser)
+            throw new NotFoundError(`User with id ${id} was not found`);
+
+        const guestUser = await mongoose.Types.ObjectId.isValid(userId)
+            ? await User.findById(userId)
+            : null;
+        if (!guestUser)
+            throw new NotFoundError(`User with id ${id} was not found`);
+
+        if (await currentUser.directMessages.find(obj => obj.equals(userId)))
+            throw new ProcessEntityError('Already exists');
+
+        await currentUser.directMessages.push(userId);
+        await currentUser.save();
     }
 
     async remove(id) {

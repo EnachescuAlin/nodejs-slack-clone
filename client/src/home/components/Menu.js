@@ -25,7 +25,7 @@ class Menu extends Component {
                     }
                 </ListGroupItem>
                 <ListGroupItem tag={SubMenu} logo="users" subMenuTitle="Direct messages">
-                    <ListGroupItem tag={NavLink} to="somethingLikeChannelsSearch" className="menu-item">
+                    <ListGroupItem tag={NavLink} to="/users/search" className="menu-item">
                         <i className="fas fa-plus-circle mr-2"></i>New direct message
                     </ListGroupItem>
                     { 

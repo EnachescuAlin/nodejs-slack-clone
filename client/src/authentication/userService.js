@@ -29,4 +29,14 @@ export default class UserService {
         const config = { headers: authHeader() };
         return axios.put(`/api/users/${userId}`, details, config);
     }
+
+    getByName = (name) => {
+        const config = { headers: authHeader() };
+        return axios.get(`/api/users?name=${name}`, config);
+    }
+
+    newDirectMessage = (userId) => {
+        const config = { headers: authHeader() };
+        return axios.put(`/api/users/directMessage/${userId}`, config);
+    }
 }

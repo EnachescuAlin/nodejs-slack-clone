@@ -16,6 +16,7 @@ import EditProfile from '../../profile/containers/EditProfile';
 import requiresAuth from '../../common/components/requiresAuth';
 import CreateChannel from '../../channels/containers/CreateChannel';
 import SearchByName from '../../channels/components/SearchByName';
+import SearchUsersByName from '../../users/components/SearchUsersByName';
 import Menu from '../components/Menu';
 import socketEventEmits from '../../sockets';
 import Channel from '../../channels/containers/Channel';
@@ -92,6 +93,7 @@ class Home extends Component {
                                         <Route path='/channels/create' component={requiresAuth(CreateChannel)}/>
                                         <Route path='/channels/search' component={requiresAuth(SearchByName)}/>
                                         <Route path='/channels/:channelId' component={requiresAuth(Channel)}/>
+                                        <Route path='/users/search' component={requiresAuth(SearchUsersByName)}/>
                                     </Switch>
                                 </CSSTransition>
                             </TransitionGroup>

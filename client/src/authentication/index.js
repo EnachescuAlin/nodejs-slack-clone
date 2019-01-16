@@ -15,7 +15,9 @@ export const authActionTypes = {
     GET_DIRECT_MESSAGES: 'talkpeach/authentication/GET_DIRECT_MESSAGES',
     UPDATE_PROFILE_REQUEST: 'talkpeach/authentication/UPDATE_PROFILE_REQUEST',
     UPDATE_PROFILE_SUCCESS: 'talkpeach/authentication/UPDATE_PROFILE_SUCCESS',
-    UPDATE_PROFILE_ERROR: 'talkpeach/authentication/UPDATE_PROFILE_ERROR'
+    UPDATE_PROFILE_ERROR: 'talkpeach/authentication/UPDATE_PROFILE_ERROR',
+    NEW_DIRECT_MESSAGES: 'talkpeach/authentication/NEW_DIRECT_MESSAGES',
+    SEARCH_USERS: 'talkpeach/authentication/SEARCH_USERS'
 }
 
 const userService = new UserService();
@@ -26,7 +28,9 @@ export const actions = {
     register,
     getCurrentUser,
     getDirectMessages,
-    updateProfile
+    updateProfile,
+    newDirectMessage,
+    searchUsers
 };
 
 function login(username, password) {
@@ -195,6 +199,46 @@ function updateProfile(userId, user) {
     }
 }
 
+function searchUsers(name) {
+    const foundUsers = (users) => ({
+        type: authActionTypes.SEARCH_USERS,
+        users 
+    });
+    const failure = (error) => {
+        return {
+            type: authActionTypes.SEARCH_USERS,
+            error
+        };
+    };
+
+    return async dispatch => {
+        try {
+            const response = await userService.getByName(name);
+            dispatch(foundUsers(response.data));
+        } catch (error) {
+            dispatch(failure(error.response.data || 'Unknown error!'));
+        }
+    }
+}
+
+function newDirectMessage(userId) {
+    const failure = (error) => {
+        return {
+            type: authActionTypes.SEARCH_USERS,
+            error
+        };
+    };
+    return async dispatch => {
+        try {
+            await userService.newDirectMessage(userId);
+            response = await userService.getCurrentUser();
+            dispatch(getDirectMessages(response.data.directMessages));
+        } catch (error) {
+            dispatch(failure(error.response.data || 'Unknown error!'));
+        }
+    }
+}
+
 const initialState = {
     token: localStorage.getItem(TOKEN_KEY)
 }
@@ -227,6 +271,8 @@ export default function authentication(state = initialState, action) {
             return Object.assign({}, state, { users: action.users });
         case authActionTypes.UPDATE_PROFILE_ERROR:
             return Object.assign({}, state, action.error);
+        case authActionTypes.SEARCH_USERS:
+            return Object.assign({}, state, { searchResult: action.users });
         case authActionTypes.UPDATE_PROFILE_SUCCESS:
             var newState = Object.assign({}, state, { user: { ...action.user, ...state.user } });
             delete newState.error;
