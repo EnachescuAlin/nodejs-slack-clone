@@ -74,7 +74,7 @@ class Home extends Component {
     render() {
         return (
             <React.Fragment>
-                { this.props.user ? 
+                { this.props.user && this.props.joinedChannels && this.props.directMessages ? 
                     <React.Fragment>
                         <Sidebar logo={logo} opened={this.state.openSidebar} onBackDropClick={this.toggleSidebar} backDropActive={this.state.backDropActive()}>
                             <Scrollbars autoHide>
@@ -117,7 +117,8 @@ Home.propTypes = {
 const mapStateToProps = (state) => {
     return {
         user: state.authentication.user,
-        joinedChannels: state.channels.joined
+        joinedChannels: state.channels.joined,
+        directMessages: state.authentication.users
     }
 }
 
