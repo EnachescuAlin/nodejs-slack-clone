@@ -24,4 +24,9 @@ export default class UserService {
         const config = { headers: authHeader() };
         return axios.put(`/api/users/${userId}`, details, config);
     }
+
+    searchUsers = (username) => {
+        const config = { headers: authHeader() };
+        return axios.get(`/api/users/search/${username}`, config);
+    }
 }

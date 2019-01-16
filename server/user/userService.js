@@ -90,6 +90,15 @@ class UserService {
         return user.toDto();
     }
 
+    async searchByUsername(search) {
+        return (await User.find({ 
+            username: {
+                $regex: `${search}.*`,
+                $options: 'i'
+            } 
+        })).map(user => user.toDto());
+    }
+
     async update(id, user) {
         const existingUser = await mongoose.Types.ObjectId.isValid(id) ? await User.findById(id) : null;
         if (!existingUser) throw new NotFoundError(`User with id ${id} was not found`);

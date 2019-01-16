@@ -14,6 +14,7 @@ router.get('/', (req, _, next) => next(req.query.participantId ? null : 'route')
 router.get('/', (req, _, next) => next(req.query.public ? null : 'route'), getChannelsByIsPublic);
 router.get('/', getChannels);
 router.get('/:id', getChannelById);
+router.get('/:id/participants', getParticipants);
 
 router.put('/:id', update);
 
@@ -110,6 +111,14 @@ function getChannelByParticipant(req, res, next)
     channelService.getByParticipantId(participantId)
         .then(channels => res.json(channels))
         .catch(err => next(err));
+}
+
+function getParticipants(req, res, next)
+{
+    const channelId = req.params.id;
+    channelService.getMembers(channelId)
+        .then(users => res.json(users))
+        .catch(err => next(err)); 
 }
 
 export default router;

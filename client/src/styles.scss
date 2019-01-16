@@ -3,6 +3,10 @@ $break-medium: 768px;
 $break-large: 992px;
 $break-xlarge: 1200px;
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 .fade-enter {
     opacity: 0;
 }
@@ -180,6 +184,10 @@ $break-xlarge: 1200px;
     @media screen and (min-width: $break-xlarge) {
         width: 78%;
     }
+}
+
+.autocomplete {
+    width: 100%;
 }
 
 .rounded-pill {
