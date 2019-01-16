@@ -8,6 +8,7 @@ class OwnerButtons extends Component {
         return (
             <div className="py-2 shadow">
                 <Button tag={NavLink} className="ml-3 mr-auto" to={`${this.props.baseUrl}/edit`} outline color="danger">Edit</Button>
+                <Button tag={NavLink} className="ml-3 mr-auto" to={`${this.props.baseUrl}/invite`} outline color="success">Invite</Button>
             </div>
         );
     }

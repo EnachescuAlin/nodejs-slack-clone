@@ -187,4 +187,16 @@ export default class ChannelService {
         await existingChannel.save();
         return existingChannel.toDto();
     }
+
+    async getMembers(channelId) {
+        const existingChannel = await mongoose.Types.ObjectId.isValid(channelId) ? await Channel.findById(channelId) : null;
+        if (!existingChannel) throw new NotFoundError(`Channel with id = ${channelId} was not found`);
+        
+        var memberIds = existingChannel.members;
+        return (await User.find({
+            '_id': {
+                $in: memberIds
+            }
+        })).map(user => user.toDto());
+    }
 }

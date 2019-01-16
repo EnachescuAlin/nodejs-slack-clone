@@ -13,6 +13,7 @@ router.post('/logout', logout);
 router.get('/', get);
 router.get('/:id', getById);
 router.get('/authenticated/current', getCurrent);
+router.get('/search/:username', search);
 
 router.put('/:id', update);
 
@@ -61,6 +62,13 @@ function getById(req, res, next) {
     const userId = req.params.id;
     userService.getById(userId)
         .then(user => res.json(user))
+        .catch(err => next(err));
+}
+
+function search(req, res, next) {
+    const username = req.params.username;
+    userService.searchByUsername(username)
+        .then(users => res.json(users))
         .catch(err => next(err));
 }
 

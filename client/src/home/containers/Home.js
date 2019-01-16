@@ -21,6 +21,7 @@ import socketEventEmits from '../../sockets';
 import Channel from '../../channels/containers/Channel';
 import requiresOwner from '../../channels/components/requiresOwner';
 import EditChannel from '../../channels/containers/EditChannel';
+import InviteParticipants from '../../channels/containers/InviteParticipants';
 
 class Home extends Component {
     constructor() {
@@ -96,6 +97,8 @@ class Home extends Component {
                                         <Route path='/channels/search' component={requiresAuth(SearchByName)} />
                                         <Route path='/channels/:channelId' exact component={requiresAuth(Channel)} />
                                         <Route path='/channels/:channelId/edit' exact component={requiresOwner(EditChannel)} />
+                                        <Route path='/channels/:channelId/invite' exact 
+                                            component={requiresOwner(InviteParticipants)} />
                                     </Switch>
                                 </CSSTransition>
                             </TransitionGroup>
