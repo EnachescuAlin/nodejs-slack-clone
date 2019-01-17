@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import { ListGroup, ListGroupItem, Badge } from 'reactstrap';
 import { NavLink } from 'react-router-dom';
 import SubMenu from '../../common/components/SubMenu';
+import { connect } from 'react-redux';
 
 class Menu extends Component {
     render() {
@@ -17,7 +18,15 @@ class Menu extends Component {
                     </ListGroupItem>
                     { 
                         this.props.joinedChannels.map((channel, index) => 
-                            <ListGroupItem tag={NavLink} key={index} to={`/channels/${channel.id}`} className="menu-item">#{channel.name}</ListGroupItem>
+                            <ListGroupItem tag={NavLink} key={index} to={`/channels/${channel.id}`} className="menu-item">
+                                #{channel.name}
+                                { this.props.notifications.channels && 
+                                    this.props.notifications.channels[channel.id] ?
+                                        <Badge className="p-2 float-right" color="danger">{this.props.notifications.channels[channel.id]}</Badge>
+                                    :
+                                        null
+                                }
+                            </ListGroupItem>
                         )
                     }
                 </ListGroupItem>
@@ -38,7 +47,12 @@ class Menu extends Component {
 
 Menu.propTypes = {
     joinedChannels: PropTypes.array.isRequired,
-    directMessages: PropTypes.array.isRequired
+    directMessages: PropTypes.array.isRequired,
+    notifications: PropTypes.object.isRequired
 }
 
-export default Menu;
+const mapStateToProps = (state) => ({
+    notifications: state.home.notifications
+});
+
+export default connect(mapStateToProps, null)(Menu);

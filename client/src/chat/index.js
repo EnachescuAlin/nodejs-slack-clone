@@ -1,4 +1,5 @@
 import socketEventEmits from '../sockets';
+import { actions as homeActions } from '../home';
 
 export const messageActionTypes = {
     GET_MESSAGES_FROM_CHANNEL: "talkpeach/messages/GET_MESSAGES_FROM_CHANNEL",
@@ -27,6 +28,7 @@ function getMessagesFromChannel(channelId) {
                 message,
                 channelId: message.receiver.channelId
             });
+            dispatch(homeActions.newChannelNotification(channelId));
         });
         socketEventEmits.receiveAllMessagesFromChannel((messages) => {
             dispatch({
@@ -34,6 +36,7 @@ function getMessagesFromChannel(channelId) {
                 messages,
                 channelId
             });
+            dispatch(homeActions.clearChannelNotifications(channelId));
         }); 
     }
 }
@@ -46,6 +49,7 @@ function getMessagesFromUser() {
                 message,
                 userId
             });
+            dispatch(homeActions.newPrivateChatNotification(userId));
         });
         socketEventEmits.receiveAllMessagesFromUser(({messages, userId}) => {
             dispatch({
@@ -53,6 +57,7 @@ function getMessagesFromUser() {
                 messages,
                 userId
             });
+            dispatch(homeActions.clearPrivateChatNotifications(userId));
         })
     }
 }

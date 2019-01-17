@@ -35,23 +35,23 @@ const getAllMessagesFromUser = ({senderId, receiverId}) => {
 }
 
 const newMessageToChannel = (onNewMessageAdded) => {
-    socketChannels.on('newMessageToChannel', onNewMessageAdded);
+    socketChannels.once('newMessageToChannel', onNewMessageAdded);
 }
 
 const newMessageToUser = (onNewMessageAdded) => {
-    socketChannels.on('newMessageToUser', onNewMessageAdded);
+    socketChannels.once('newMessageToUser', onNewMessageAdded);
 }
 
 const receiveMessagesFromChannel = (onReceiveMessages) => {
-    socketChannels.on('receiveMessages', onReceiveMessages);
+    socketChannels.once('receiveMessages', onReceiveMessages);
 }
 
 const receiveAllMessagesFromChannel = (onReceiveMessages) => {
-    socketChannels.on('receiveAllMessages', onReceiveMessages);
+    socketChannels.once('receiveAllMessages', onReceiveMessages);
 }
 
 const receiveAllMessagesFromUser = (onReceiveMessages) => {
-    socketChannels.on('receiveAllMessagesBySenderAndReceiver', onReceiveMessages);
+    socketChannels.once('receiveAllMessagesBySenderAndReceiver', onReceiveMessages);
 }
 
 export default {
