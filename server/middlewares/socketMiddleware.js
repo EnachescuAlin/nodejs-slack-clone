@@ -2,7 +2,13 @@ import MessageService from '../message/messageService';
 
 const messageService = new MessageService();
 
+const connectedUsers = {};
+
 export default (io) => (socket) => {
+    socket.on('connectUser', userId => {
+        connectedUsers[userId] = socket.id;
+    });
+
     socket.on('subscribe', channelId => { 
         socket.join(channelId); 
     });
@@ -26,18 +32,14 @@ export default (io) => (socket) => {
         socket.emit('receiveAllMessages', messages);
     });
 
-    socket.on('sendToUser', async ({}) => {
+    socket.on('sendToUser', async ({message, sender}) => {
         var newMessage = await messageService.add(message, sender);
-        io.in(room).emit('newMessageToUser', newMessage);
-    });
-
-    socket.on('getMessagesBySenderAndReceiver', async ({senderId, receiverId, page, pageSize}) => {
-        var messages = await messageService.getBySenderAndReceiver(senderId, receiverId, pageSize, (page - 1) * pageSize);
-        socket.emit('receiveMessagesBySenderAndReceiver', messages);
+        io.sockets.connected[connectedUsers[message.receiverId]].emit('newMessageToUser', { message: newMessage, userId: sender.userId });
+        socket.emit('newMessageToUser', {message: newMessage, userId: message.receiverId});
     });
 
     socket.on('getAllMessagesBySenderAndReceiver', async ({senderId, receiverId}) => {
         var messages = await messageService.getBySenderAndReceiver(senderId, receiverId);
-        socket.emit('receiveAllMessagesBySenderAndReceiver', messages);
+        socket.emit('receiveAllMessagesBySenderAndReceiver', {messages, userId: receiverId});
     });
 }

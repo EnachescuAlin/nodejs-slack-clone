@@ -10,27 +10,29 @@ import Message from '../../chat/components/Message';
 import { Scrollbars } from 'react-custom-scrollbars';
 import AddMessageForm from '../../chat/components/AddMessageForm';
 
-class Channel extends Component {
+class PrivateChat extends Component {
     onAddMessage = (text) => {
         if (text && text.length > 0) {
             var message = {
                 text,
-                channelId: this.props.match.params.channelId
+                receiverId: this.props.match.params.userId
             };
             var sender = {
                 userId: this.props.user.id,
                 username: this.props.user.username
             };
-            this.props.actions.sendMessageToChannel(this.props.match.params.channelId, message, sender);
+            this.props.actions.sendMessageToUser(message, sender);
             return true;
         }
         return false
     } 
 
     componentWillMount() {
-        this.props.actions.cleanMessages(this.props.match.params.channelId);
-        socketEventEmits.getAllMessagesFromChannel(this.props.match.params.channelId);
-        this.props.actions.getMessagesFromChannel(this.props.match.params.channelId);
+        if (this.props.user) {
+            this.props.actions.cleanPrivateMessages(this.props.match.params.userId);
+            socketEventEmits.getAllMessagesFromUser({receiverId: this.props.match.params.userId, senderId: this.props.user.id});
+            this.props.actions.getMessagesFromUser();
+        }
     }
 
     componentDidUpdate() {
@@ -44,11 +46,11 @@ class Channel extends Component {
         return (
             <React.Fragment>
                 {
-                    this.props.channel && this.props.channel.messages ?
+                    this.props.private && this.props.private.messages ?
                         <div className="pt-5 mt-4">
                             <div className="wrapper full-height">
                                 <Scrollbars ref="scrollbars">
-                                    { this.props.channel.messages.map((message, index) => 
+                                    { this.props.private.messages.map((message, index) => 
                                         <Message 
                                             isSendByUser={message.sender.userId === this.props.user.id} 
                                             key={index} message={message} />) }
@@ -64,15 +66,15 @@ class Channel extends Component {
     }
 }
 
-Channel.propTypes = {
-    channel: PropTypes.object,
+PrivateChat.propTypes = {
+    private: PropTypes.object,
     actions: PropTypes.object.isRequired,
     match: ReactRouterPropTypes.match,
     user: PropTypes.object
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    channel: state.chat.channels[ownProps.match.params.channelId],
+    private: state.chat.private[ownProps.match.params.userId],
     user: state.authentication.user
 });
 
@@ -80,4 +82,4 @@ const mapDispatchToProps = (dispatch) => ({
     actions: bindActionCreators(actions, dispatch)
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Channel);
+export default connect(mapStateToProps, mapDispatchToProps)(PrivateChat);
