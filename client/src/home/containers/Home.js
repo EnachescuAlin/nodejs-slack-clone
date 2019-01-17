@@ -19,6 +19,7 @@ import SearchByName from '../../channels/components/SearchByName';
 import Menu from '../components/Menu';
 import socketEventEmits from '../../sockets';
 import Channel from '../../channels/containers/Channel';
+import PrivateChat from '../../chat/containers/PrivateChat';
 
 class Home extends Component {
     constructor() {
@@ -35,6 +36,7 @@ class Home extends Component {
         this.props.actions.getCurrentUser()
             .then(() => {
                 this.props.actions.getDirectMessages(this.props.user.directMessages);
+                socketEventEmits.connectUser(this.props.user.id);
                 this.props.actions.getJoinedChannels(this.props.user.id)
                     .then(() => {
                         if (!this.state.isSocketConnected) {
@@ -89,9 +91,10 @@ class Home extends Component {
                                     timeout={300}>
                                     <Switch location={this.props.location}>
                                         <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
-                                        <Route path='/channels/create' component={requiresAuth(CreateChannel)}/>
-                                        <Route path='/channels/search' component={requiresAuth(SearchByName)}/>
-                                        <Route path='/channels/:channelId' component={requiresAuth(Channel)}/>
+                                        <Route path='/channels/create' component={requiresAuth(CreateChannel)} />
+                                        <Route path='/channels/search' component={requiresAuth(SearchByName)} />
+                                        <Route path='/channels/:channelId' component={requiresAuth(Channel)} />
+                                        <Route path='/directMessages/:userId' component={requiresAuth(PrivateChat)} />
                                     </Switch>
                                 </CSSTransition>
                             </TransitionGroup>

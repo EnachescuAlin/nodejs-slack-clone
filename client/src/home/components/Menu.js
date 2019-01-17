@@ -8,9 +8,6 @@ class Menu extends Component {
     render() {
         return (
             <ListGroup className="menu">
-                <ListGroupItem tag={NavLink} to="/" className="menu-item">
-                    <i className="fas fa-home mr-2"></i>Home
-                </ListGroupItem>
                 <ListGroupItem tag={SubMenu} logo="users" subMenuTitle="Channels">
                     <ListGroupItem tag={NavLink} to="/channels/create" className="menu-item">
                         <i className="fas fa-plus-circle mr-2"></i>Create new channel
@@ -24,13 +21,13 @@ class Menu extends Component {
                         )
                     }
                 </ListGroupItem>
-                <ListGroupItem tag={SubMenu} logo="users" subMenuTitle="Direct messages">
+                <ListGroupItem tag={SubMenu} logo="comments" subMenuTitle="Direct messages">
                     <ListGroupItem tag={NavLink} to="somethingLikeChannelsSearch" className="menu-item">
                         <i className="fas fa-plus-circle mr-2"></i>New direct message
                     </ListGroupItem>
                     { 
                         this.props.directMessages.map((user, index) => 
-                            <ListGroupItem tag={NavLink} key={index} to={`nothingForMom`} className="menu-item">#{user.username}</ListGroupItem>
+                            <ListGroupItem tag={NavLink} key={index} to={`/directMessages/${user.id}`} className="menu-item">{user.username}</ListGroupItem>
                         )
                     }
                 </ListGroupItem>

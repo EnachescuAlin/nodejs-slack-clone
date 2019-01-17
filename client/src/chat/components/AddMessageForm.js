@@ -31,7 +31,7 @@ class AddMessageForm extends Component {
                 <InputGroup>
                     <Input value={this.state.text} onChange={this.handleInputChange} type="text" bsSize="lg" />
                     <InputGroupAddon addonType="append">
-                        <Button><i className="fas fa-comments"></i></Button>
+                        <Button><i className="fas fa-comment"></i></Button>
                     </InputGroupAddon>
                 </InputGroup>
             </Form>
