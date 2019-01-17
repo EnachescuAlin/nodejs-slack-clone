@@ -91,14 +91,13 @@ class Home extends Component {
                         <PageContent user={this.props.user} onLogoutClick={this.logout} onToggleClick={this.toggleSidebar} fullPage={!this.state.openSidebar}>
                                 <Switch>
                                     <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
-                                        <Route path='/channels/create' component={requiresAuth(CreateChannel)} />
-                                        <Route path='/channels/search' component={requiresAuth(SearchByName)} />
-                                        <Route path='/channels/:channelId' exact component={requiresAuth(Channel)} />
-                                        <Route path='/users/search' component={requiresAuth(SearchUsersByName)}/>
+                                    <Route path='/channels/create' component={requiresAuth(CreateChannel)} />
+                                    <Route path='/channels/search' component={requiresAuth(SearchByName)} />
+                                    <Route path='/channels/:channelId' exact component={requiresAuth(Channel)} />
+                                    <Route path='/users/search' component={requiresAuth(SearchUsersByName)}/>
                                     <Route path='/directMessages/:userId' component={requiresAuth(PrivateChat)} />
-                                        <Route path='/channels/:channelId/edit' exact component={requiresOwner(EditChannel)} />
-                                        <Route path='/channels/:channelId/invite' exact 
-                                            component={requiresOwner(InviteParticipants)} />
+                                    <Route path='/channels/:channelId/edit' exact component={requiresOwner(EditChannel)} />
+                                    <Route path='/channels/:channelId/invite' exact component={requiresOwner(InviteParticipants)} />
                                 </Switch>
                         </PageContent>
                     </React.Fragment> 

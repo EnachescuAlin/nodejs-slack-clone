@@ -20,12 +20,12 @@ class Menu extends Component {
                         this.props.joinedChannels.map((channel, index) => 
                             <ListGroupItem tag={NavLink} key={index} to={`/channels/${channel.id}`} className="menu-item">
                                 #{channel.name}
-                                { this.props.notifications.channels && 
+                                {/* { this.props.notifications.channels && 
                                     this.props.notifications.channels[channel.id] ?
                                         <Badge className="p-2 float-right" color="danger">{this.props.notifications.channels[channel.id]}</Badge>
                                     :
                                         null
-                                }
+                                } */}
                             </ListGroupItem>
                         )
                     }
@@ -48,7 +48,7 @@ class Menu extends Component {
 Menu.propTypes = {
     joinedChannels: PropTypes.array.isRequired,
     directMessages: PropTypes.array.isRequired,
-    notifications: PropTypes.object.isRequired
+    //notifications: PropTypes.object.isRequired
 }
 
 const mapStateToProps = (state) => ({

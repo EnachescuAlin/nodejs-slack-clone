@@ -104,7 +104,7 @@ function update(req, res, next) {
 function addDirectMessage(req, res, next) {
     const userId = req.params.id;
     const currentUserId = req.user.sub;
-    UserService.addDirectMessage(currentUserId, userId)
+    userService.addDirectMessage(currentUserId, userId)
         .then(() => res.status(204).send())
         .catch(err => next(err));
 }

@@ -37,7 +37,7 @@ export default class UserService {
 
     newDirectMessage = (userId) => {
         const config = { headers: authHeader() };
-        return axios.put(`/api/users/directMessage/${userId}`, config);
+        return axios.put(`/api/users/directMessage/${userId}`, null, config);
     }
 
     searchUsers = (username) => {
