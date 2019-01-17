@@ -16,6 +16,7 @@ router.get('/authenticated/current', getCurrent);
 router.get('/search/:username', search);
 
 router.put('/:id', update);
+router.put('/directMessage/:id', addDirectMessage);
 
 router.delete('/:id', remove);
 
@@ -98,6 +99,14 @@ function update(req, res, next) {
             .then(() => res.status(204).send())
             .catch(err => next(err));
     }
+}
+
+function addDirectMessage(req, res, next) {
+    const userId = req.params.id;
+    const currentUserId = req.user.sub;
+    UserService.addDirectMessage(currentUserId, userId)
+        .then(() => res.status(204).send())
+        .catch(err => next(err));
 }
 
 function remove(req, res, next) {

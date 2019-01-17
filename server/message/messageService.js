@@ -54,7 +54,6 @@ class MessageService {
         var userReceiver = await mongoose.Types.ObjectId.isValid(message.receiverId)
             ? await User.findById(message.receiverId)
             : null;
-
         if (!userReceiver)
             throw new ProcessEntityError(`You cannot send a direct message to an unknown user`);
 
@@ -129,10 +128,10 @@ class MessageService {
                     'sender.userId': receiverId
                 }
             ]
-        }).sort('-addDate');
+        });
 
         if (limit)
-            query = query.skip(offset).limit(limit);
+            query = query.sort('-addDate').skip(offset).limit(limit);
 
         return (await query).map(message => message.toDto());
     }

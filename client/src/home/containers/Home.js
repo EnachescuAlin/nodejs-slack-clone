@@ -11,15 +11,16 @@ import { bindActionCreators } from 'redux';
 import Spinner from '../../common/components/Spinner';
 import ReactRouterPropTypes from 'react-router-prop-types';
 import { Switch, Route } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import EditProfile from '../../profile/containers/EditProfile';
 import requiresAuth from '../../common/components/requiresAuth';
 import CreateChannel from '../../channels/containers/CreateChannel';
 import SearchByName from '../../channels/components/SearchByName';
-import Menu from '../components/Menu';
+import SearchUsersByName from '../../users/components/SearchUsersByName';
+import Menu from './Menu';
 import socketEventEmits from '../../sockets';
 import Channel from '../../channels/containers/Channel';
 import requiresOwner from '../../channels/components/requiresOwner';
+import PrivateChat from '../../chat/containers/PrivateChat';
 import EditChannel from '../../channels/containers/EditChannel';
 import InviteParticipants from '../../channels/containers/InviteParticipants';
 
@@ -38,6 +39,8 @@ class Home extends Component {
         if (!this.props.user || !this.props.joinedChannels) {
             this.props.actions.getCurrentUser()
                 .then(() => {
+                this.props.actions.getDirectMessages(this.props.user.directMessages);
+                socketEventEmits.connectUser(this.props.user.id);
                     this.props.actions.getJoinedChannels(this.props.user.id)
                         .then(() => {
                             if (!this.state.isSocketConnected) {
@@ -78,30 +81,25 @@ class Home extends Component {
     render() {
         return (
             <React.Fragment>
-                { this.props.user ? 
+                { this.props.user && this.props.joinedChannels && this.props.directMessages ? 
                     <React.Fragment>
                         <Sidebar logo={logo} opened={this.state.openSidebar} onBackDropClick={this.toggleSidebar} backDropActive={this.state.backDropActive()}>
                             <Scrollbars autoHide>
-                                <Menu joinedChannels={this.props.joinedChannels} />
+                                <Menu joinedChannels={this.props.joinedChannels} directMessages={this.props.directMessages}/>
                             </Scrollbars>
                         </Sidebar>
                         <PageContent user={this.props.user} onLogoutClick={this.logout} onToggleClick={this.toggleSidebar} fullPage={!this.state.openSidebar}>
-                            <TransitionGroup>
-                                <CSSTransition 
-                                    key={this.props.location.key}
-                                    classNames="fade"
-                                    timeout={300}>
-                                    <Switch location={this.props.location}>
-                                        <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
+                                <Switch>
+                                    <Route path='/edit-profile' component={requiresAuth(EditProfile)} />
                                         <Route path='/channels/create' component={requiresAuth(CreateChannel)} />
                                         <Route path='/channels/search' component={requiresAuth(SearchByName)} />
                                         <Route path='/channels/:channelId' exact component={requiresAuth(Channel)} />
+                                        <Route path='/users/search' component={requiresAuth(SearchUsersByName)}/>
+                                    <Route path='/directMessages/:userId' component={requiresAuth(PrivateChat)} />
                                         <Route path='/channels/:channelId/edit' exact component={requiresOwner(EditChannel)} />
                                         <Route path='/channels/:channelId/invite' exact 
                                             component={requiresOwner(InviteParticipants)} />
-                                    </Switch>
-                                </CSSTransition>
-                            </TransitionGroup>
+                                </Switch>
                         </PageContent>
                     </React.Fragment> 
                 : 
@@ -117,13 +115,15 @@ Home.propTypes = {
     user: PropTypes.object,
     history: ReactRouterPropTypes.history.isRequired,
     location: ReactRouterPropTypes.location.isRequired,
-    joinedChannels: PropTypes.array
+    joinedChannels: PropTypes.array,
+    directMessages: PropTypes.array
 }
 
 const mapStateToProps = (state) => {
     return {
         user: state.authentication.user,
-        joinedChannels: state.channels.joined
+        joinedChannels: state.channels.joined,
+        directMessages: state.authentication.users,
     }
 }
 

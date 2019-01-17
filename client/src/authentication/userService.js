@@ -20,9 +20,24 @@ export default class UserService {
         return axios.get('/api/users/authenticated/current', config);
     }
 
+    getUser = (userId) => {
+        const config = { headers: authHeader() };
+        return axios.get(`/api/users/${userId}`, config);
+    }
+
     update = (userId, details) => {
         const config = { headers: authHeader() };
         return axios.put(`/api/users/${userId}`, details, config);
+    }
+
+    getByName = (name) => {
+        const config = { headers: authHeader() };
+        return axios.get(`/api/users?name=${name}`, config);
+    }
+
+    newDirectMessage = (userId) => {
+        const config = { headers: authHeader() };
+        return axios.put(`/api/users/directMessage/${userId}`, config);
     }
 
     searchUsers = (username) => {
