@@ -49,12 +49,12 @@ class Channel extends Component {
         return (
             <React.Fragment>
                 {
-                    this.props.channel && this.props.channel.messages ?
+                    this.props.channel && this.props.chat ?
                         <div className="pt-5 mt-4">
                             { this.isOwner() ? <OwnerButtons baseUrl={this.props.match.url}/> : null }
                             <div className="wrapper full-height">
                                 <Scrollbars ref="scrollbars">
-                                    { this.props.channel.messages.map((message, index) => 
+                                    { this.props.chat.messages.map((message, index) => 
                                         <Message 
                                             isSendByUser={message.sender.userId === this.props.user.id} 
                                             key={index} message={message} />) }
@@ -75,11 +75,11 @@ Channel.propTypes = {
     actions: PropTypes.object.isRequired,
     match: ReactRouterPropTypes.match,
     user: PropTypes.object,
-    channel: PropTypes.object
+    chat: PropTypes.object
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    channel: state.chat.channels[ownProps.match.params.channelId],
+    chat: state.chat.channels[ownProps.match.params.channelId],
     user: state.authentication.user,
     channel: state.channels.selected
 });

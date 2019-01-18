@@ -22,7 +22,7 @@ class SubMenu extends Component {
                     {this.props.subMenuTitle}
                     <i className={`ml-2 fas ${this.state.isOpened ? 'fa-caret-up' : 'fa-caret-down'}`}></i>
                 </ListGroupItem>
-                <Collapse className="sub-menu" isOpen={this.state.isOpened}>
+                <Collapse tag="li" className="sub-menu" isOpen={this.state.isOpened}>
                     {this.props.children}
                 </Collapse>
             </React.Fragment>

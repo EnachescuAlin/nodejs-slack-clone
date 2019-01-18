@@ -15,14 +15,13 @@ class UserDetails extends Component {
                         <CardTitle>{this.props.user.username}</CardTitle>
                         <CardBody>
                             <Row>
-                                <Col sm={{ size: 10 }}>
-                                    <CardText className="text-truncate">{this.props.user.firstname}</CardText>
-                                    <CardText className="text-truncate">{this.props.user.lastname}</CardText>
+                                <Col sm={{ size: 9 }}>
+                                    <CardText className="text-truncate">{this.props.user.firstname}, {this.props.user.lastname}</CardText>
                                 </Col>
                                 {
                                     !this.props.hideJoin
                                     ?
-                                        <Col sm={{ size: 1 }}><Button onClick={this.handleClick}>Join</Button></Col> 
+                                        <Col sm={{ size: 2 }} className="mr-2"><Button onClick={this.handleClick}>Join</Button></Col> 
                                     :
                                     null
                                 }

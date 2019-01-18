@@ -248,7 +248,7 @@ export default function channels(state = initialState, action) {
                 usersSearched: []
             }
         case channelActionTypes.ADD_CHANNEL:
-            return Object.assign({}, state, { joined: [ ...state.channels, action.newChannel ] });
+            return Object.assign({}, state, { joined: [ ...state.joined, action.newChannel ] });
         case channelActionTypes.UPDATE_CHANNEL:
             return {
                 ...state,

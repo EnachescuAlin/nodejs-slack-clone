@@ -228,11 +228,16 @@ function newDirectMessage(userId) {
             error
         };
     };
+    const success = (userId) => {
+        return {
+            type: authActionTypes.NEW_DIRECT_MESSAGES,
+            userId
+        };
+    };
     return async dispatch => {
         try {
             await userService.newDirectMessage(userId);
-            response = await userService.getCurrentUser();
-            dispatch(getDirectMessages(response.data.directMessages));
+            dispatch(success(userId));
         } catch (error) {
             dispatch(failure(error.response.data || 'Unknown error!'));
         }
@@ -277,6 +282,14 @@ export default function authentication(state = initialState, action) {
             var newState = Object.assign({}, state, { user: { ...action.user, ...state.user } });
             delete newState.error;
             return newState;
+        case authActionTypes.NEW_DIRECT_MESSAGES:
+            return {
+                ...state,
+                user: {
+                    ...state.user,
+                    directMessages: [...state.user.directMessages, action.userId]
+                }
+            }
         default:
             return state;
     }

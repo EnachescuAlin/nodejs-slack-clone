@@ -19,15 +19,15 @@ class ChannelForm extends Component {
                 },
                 fields: {
                     name: {
-                        value: this.props.channelDetails.name || '',
+                        value: this.props.channelDetails ? this.props.channelDetails.name : '',
                         touched: false
                     },
                     description: {
-                        value: this.props.channelDetails.description || '',
+                        value: this.props.channelDetails ? this.props.channelDetails.description : '',
                         touched: false
                     },
                     isPublic: {
-                        value: this.props.channelDetails.isPublic || false,
+                        value: this.props.channelDetails ? this.props.channelDetails.isPublic : false,
                         touched: false
                     }
                 },
@@ -38,7 +38,7 @@ class ChannelForm extends Component {
 
     handleInputChange = (event) => {
         var name = event.target.name;
-        var value = event.target.value || event.target.checked;
+        var value = event.target.checked || event.target.value;
         this.setState({ 
             channelForm: { 
                 ...this.state.channelForm, 
@@ -59,7 +59,11 @@ class ChannelForm extends Component {
             description: this.state.channelForm.fields.description.value,
             isPublic: this.state.channelForm.fields.isPublic.value
         };
-        this.props.onSubmit(this.props.channelDetails.id, channel);
+        if (this.props.channelDetails) {
+            this.props.onSubmit(this.props.channelDetails.id, channel);
+        } else {
+            this.props.onSubmit(channel);
+        }
         event.preventDefault();
     }
 

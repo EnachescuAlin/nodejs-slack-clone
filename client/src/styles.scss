@@ -95,16 +95,18 @@ $break-xlarge: 1200px;
     }
 }
 
-.sub-menu .menu-item {
+.sub-menu {
+    padding: 0 2rem;
     background: #0265ce;
-    padding-left: 2em;
+    & .menu-item {
 
-    &.active {
-        background: #0760be;
-    }
-    
-    &:hover {
-        background: #034fa1;
+        &.active {
+            background: #0760be;
+        }
+        
+        &:hover {
+            background: #034fa1;
+        }
     }
 }
 

@@ -47,7 +47,7 @@ class Menu extends Component {
 
 Menu.propTypes = {
     joinedChannels: PropTypes.array.isRequired,
-    directMessages: PropTypes.array.isRequired,
+    directMessages: PropTypes.array.isRequired
     //notifications: PropTypes.object.isRequired
 }
 
